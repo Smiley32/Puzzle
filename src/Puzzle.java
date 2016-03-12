@@ -5,7 +5,7 @@ public class Puzzle
 {
     public static void main(String[] args)
     {
-        E.ln("Encore rien... Super");
+        E.ln("Juste une fenêtre");
 
         EcranGraphique.init(50, 50, 640, 480, 640, 480, "Puzzle");
     }
