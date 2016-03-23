@@ -3,31 +3,13 @@
  */
 class Puzzle
 {
+    // Hauteur et largeur de l'image (d'apres l'ennonce, 360*480)
+    public static int imgLarg = 360;
+    public static int imgHaut = 480;
+
     public static int rand(int min, int max) // fct aleatoire
     {
         return (int)(Math.random() * (max - min + 1)) + min;
-    }
-    
-    public static int nbCasesX = 5;
-    public static int nbCasesY = 6;
-    
-    /**
-     *  Type agrege qui va contenir l'ensemle du jeu :
-     *   - deux grilles
-     */
-    static class Puzzles
-    {
-        Image[][] grilleMelange;
-        Image[][] grille;
-    }
-    
-    /**
-     *  Type agrege Image : contient une image
-     */
-    static class Image
-    {
-        int[][] img;
-        // int larg, haut;
     }
 
     public static void main(String[] args)
@@ -37,43 +19,105 @@ class Puzzle
         EcranGraphique.init(50, 50, 669, 552, 640, 480, "Puzzle"); // Init de la fenetre
         EcranGraphique.setClearColor(0, 255, 255);
         EcranGraphique.clear();
-        
-        init();
-        render();
-        
-        Puzzles jeu = new Puzzles();
     }
     
-    public static Image chargerImage(String path)
+    static class Piece
     {
-        Image pic = new Image();
-        return pic;
+        int[][] image;
+        boolean placee;
+        Position2D pos;
     }
-    
-    public static Image[][] decouperImage(Image image)
+
+    static class Position2D
     {
-        
-        
-        return grille;
+        int colonne, ligne;
     }
-    
-    public static void init()
+
+    static class PuzzleJeu
     {
-        
+        int nbCoups;
+        Piece[][] pieces;
+        long temps;
+        int tx, ty;
     }
-    
-    public static void update()
+
+    /**
+     * Affichage du puzzle
+     * @param pzl  puzzle à afficher
+     */
+    public static void afficher(PuzzleJeu pzl)
     {
-        
+
     }
-    
-    public static void render()
+
+    /**
+     * Fonction qui dit si le puzzle est fini
+     * @param pzl   puzzle à vérifier
+     * @return      vrai si le puzzle est fini
+     */
+    public static boolean estReconstitue(PuzzleJeu pzl)
     {
-        // Effacement de l'ecran
-        EcranGraphique.setClearColor(255, 255, 255);
-        EcranGraphique.clear();
-        
-        EcranGraphique.setColor(255, 0, 0);
-        EcranGraphique.fillRect(10, 20, 50, 50);
+        boolean bl = false;
+
+        return bl;
+    }
+
+    /**
+     * Initialisation du puzzle
+     * @param pzl   puzzle à initialiser
+     * @param image image à mélanger
+     */
+    public static void initialiser(PuzzleJeu pzl, int[][] image)
+    {
+
+    }
+
+    /**
+     * Jeu...
+     * @param pzl  puzzle
+     */
+    public static void jouer(PuzzleJeu pzl)
+    {
+
+    }
+
+    /**
+     * Joue un coup
+     * @param pzl   puzzle
+     */
+    public static void jouerCoup(PuzzleJeu pzl)
+    {
+
+    }
+
+    /**
+     * Melange un puzzle
+     * @param pzl
+     */
+    public static void melanger(PuzzleJeu pzl)
+    {
+
+    }
+
+    /**
+     * Saisie d'une image
+     * @return  l'image (tableau d'entiers)
+     */
+    public static int[][] saisirImage()
+    {
+        int[][] img = new int[imgHaut][imgLarg];
+
+        return img;
+    }
+
+    /**
+     * Retourne la position du clic
+     * @return   la position du clic
+     */
+    public static Position2D attendClic()
+    {
+        Position2D clic = new Position2D();
+
+        return clic;
     }
 }
