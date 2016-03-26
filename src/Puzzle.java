@@ -21,6 +21,7 @@ class Puzzle
 
     // Pour avoir un clic unique
     public static boolean clicUnique = true;
+    public static Position2D clic = new Position2D();
 
     public static int rand(int min, int max) // fct aleatoire
     {
@@ -74,6 +75,9 @@ class Puzzle
         booleen placee a faux. s'il est a vrai, la piece ne doit
         plus se trouver a droite...
          */
+
+        // Un ecran blanc...
+        EcranGraphique.clear();
 
         /*int x1 = 10;
         int y1 = 10;
@@ -129,7 +133,7 @@ class Puzzle
             le if ne servira a rien
 
             tu ne declare pas i
-            
+
             TES WHILES NE SERVENT A RIEN.
 
             Reflechis un peu avant de poster ça...
@@ -137,8 +141,8 @@ class Puzzle
             Si tu ne sais pas, va voir ta fiche PDL/Java, pour voir comment marche un while
          */
         boolean bl = true;
-		do
-		{				
+		/*do
+		{
 			while(int j =0; j < nbPiecesY; j++)
             {
                 if (pzl.pieces[i][j].placee == false) {
@@ -146,7 +150,7 @@ class Puzzle
                 }
             }
 		}
-        while (int i = 0; i < nbPiecesX; i++);
+        while (int i = 0; i < nbPiecesX; i++);*/
         return bl;
     }
 
@@ -204,10 +208,7 @@ class Puzzle
         while(continuer)
         {
             jouerCoup(pzl);
-            afficher(pzl);
 
-            if(EcranGraphique.getKey() == 'a')
-                continuer = false;
         }
     }
 
@@ -217,8 +218,100 @@ class Puzzle
      */
     public static void jouerCoup(PuzzleJeu pzl)
     {
-        Position2D clic = new Position2D();
-        clic = attendClic();
+        // Case selectionnee (doit correspondre a une piece non placee)
+        Position2D caseSelec = new Position2D();
+        caseSelec.x = -1;
+        caseSelec.y = -1;
+
+        // Case destination (doit correspondre a une case vide dans la grille)
+        Position2D caseDest = new Position2D();
+        caseDest.x = -1;
+        caseDest.y = -1;
+
+        int x, y;
+        boolean continuer = true;
+
+        while(continuer)
+        {
+            EcranGraphique.wait(16);
+            afficher(pzl);
+
+            // On regarde si le clic est sur une case :
+            if (attendClic()) // Si il y a un clic
+            {
+                // Case selectionnee dans la seconde grille
+                x = (clic.x - x2) / (imgLarg / nbPiecesX + 5);
+                y = (clic.y - y2) / (imgHaut / nbPiecesY + 5);
+                if (x >= 0 && y >= 0 && x < nbPiecesX && y < nbPiecesY) {
+                    // Les cases sont placees selon leur position, il faut donc trouver la case qui a ces positions
+                    Position2D num = new Position2D();
+                    num = posVersNumPiece(pzl, x, y);
+
+                    if (!pzl.pieces[num.x][num.y].placee) {
+                        caseSelec.x = num.x;
+                        caseSelec.y = num.y;
+                    }
+                }
+
+                // Case destination dans la premiere grille
+                x = (clic.x - x1) / (imgLarg / nbPiecesX);
+                y = (clic.y - y1) / (imgHaut / nbPiecesY);
+                if (x >= 0 && y >= 0 && x < nbPiecesX && y < nbPiecesY
+                        && caseSelec.x != -1 && caseSelec.y != -1) // Il faut avoir selec une case pour choisir la dest
+                {
+                    // On verifie qu'il n'y a pas de case placee
+                    if (!pzl.pieces[x][y].placee) {
+                        caseDest.x = x;
+                        caseDest.y = y;
+                    }
+                }
+
+                E.ln(caseSelec.x, caseSelec.y);
+            }
+
+            if(caseDest.x != -1 && caseDest.y != -1)
+            {
+                // verification de la position de la destination
+                if(caseDest.x == caseSelec.x && caseDest.y == caseSelec.y)
+                    pzl.pieces[caseDest.x][caseDest.y].placee = true;
+                else
+                {
+                    caseDest.x = -1;
+                    caseDest.y = -1;
+                }
+            }
+
+        }
+
+    }
+
+    public static Position2D posVersNumPiece(PuzzleJeu pzl, int x, int y)
+    {
+        Position2D num = new Position2D();
+        num.x = -1;
+        num.y = -1;
+
+        boolean trouve = false;
+        int j = 0;
+        int i = 0;
+
+        while(trouve == false && j < nbPiecesY)
+        {
+            i = 0;
+            while(trouve == false && i < nbPiecesX)
+            {
+                if(pzl.pieces[i][j].pos.x == x && pzl.pieces[i][j].pos.y == y)
+                {
+                    num.x = i;
+                    num.y = j;
+                    trouve = true;
+                }
+                i++;
+            }
+            j++;
+        }
+
+        return num;
     }
 
     /**
@@ -273,15 +366,18 @@ class Puzzle
      * Retourne la position du clic
      * @return   la position du clic
      */
-    public static Position2D attendClic()
+    public static boolean attendClic()
     {
-        Position2D clic = new Position2D();
+        // Position2D clic = new Position2D();
+
+        boolean clique = false;
 
         if(EcranGraphique.getMouseState() == 0)
         {
             clic.x = -1;
             clic.y = -1;
             clicUnique = true;
+            clique = false;
         }
 
         if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
@@ -292,9 +388,10 @@ class Puzzle
                 clic.y = EcranGraphique.getMouseY();
                 E.ln(clic.x + " - " + clic.y);
                 clicUnique = false;
+                clique = true;
             }
         }
 
-        return clic;
+        return clique;
     }
 }
