@@ -24,12 +24,11 @@ class Puzzle
         EcranGraphique.setClearColor(255, 255, 255);
         EcranGraphique.clear();
 
-
         PuzzleJeu pzl = new PuzzleJeu();
         initialiser(pzl, saisirImage());
-        EcranGraphique.drawImage(0, 0, pzl.pieces[0][1].image);
+        EcranGraphique.drawImage(0, 0, pzl.pieces[0][2].image);
         melanger(pzl);
-        E.ln("X : " + pzl.pieces[0][1].pos.colonne + " ; Y : " + pzl.pieces[0][1].pos.ligne);
+        E.ln("X : " + pzl.pieces[0][2].pos.colonne + " ; Y : " + pzl.pieces[0][1].pos.ligne);
         EcranGraphique.flush();
     }
     
@@ -59,7 +58,13 @@ class Puzzle
      */
     public static void afficher(PuzzleJeu pzl)
     {
-
+        /*
+        Il va y avoir deux parties : le puzzle a faire a gauche,
+        les pieces a placer a droite. Les pieces sont a droite
+        dans la position indiquee dans Piece si elles ont le
+        booleen placee a faux. s'il est a vrai, la piece ne doit
+        plus se trouver a droite...
+         */
     }
 
     /**
@@ -122,6 +127,7 @@ class Puzzle
                                                             [k * (imgHaut / nbPiecesY) + j];
                         pzl.pieces[l][k].pos.ligne = l;
                         pzl.pieces[l][k].pos.colonne = k;
+                        pzl.pieces[l][k].placee = false;
                     }
                 }
             }
