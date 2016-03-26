@@ -11,6 +11,12 @@ class Puzzle
     public static final int nbPiecesX = 3;
     public static final int nbPiecesY = 4;
 
+    // Position des grilles
+    public static int x1 = 10;
+    public static int y1 = 10;
+    public static int x2 = x1 + imgLarg + 100;
+    public static int y2 = y1;
+
     public static int rand(int min, int max) // fct aleatoire
     {
         return (int)(Math.random() * (max - min + 1)) + min;
@@ -26,11 +32,8 @@ class Puzzle
 
         PuzzleJeu pzl = new PuzzleJeu();
         initialiser(pzl, saisirImage());
-        // EcranGraphique.drawImage(0, 0, pzl.pieces[0][2].image);
         melanger(pzl);
-        // E.ln("X : " + pzl.pieces[0][2].pos.colonne + " ; Y : " + pzl.pieces[0][1].pos.ligne);
-        afficher(pzl);
-        // EcranGraphique.flush();
+        jouer(pzl);
     }
     
     static class Piece
@@ -42,7 +45,7 @@ class Puzzle
 
     static class Position2D
     {
-        int colonne, ligne;
+        int x, y;
     }
 
     static class PuzzleJeu
@@ -67,11 +70,11 @@ class Puzzle
         plus se trouver a droite...
          */
 
-        int x1 = 10;
+        /*int x1 = 10;
         int y1 = 10;
 
         int x2 = x1 + imgLarg + 100;
-        int y2 = y1;
+        int y2 = y1;*/
 
         pzl.pieces[2][1].placee = true;
         pzl.pieces[1][1].placee = true;
@@ -96,8 +99,8 @@ class Puzzle
                     EcranGraphique.drawImage(x1 + (imgLarg / nbPiecesX) * i,
                              y1 + (imgHaut / nbPiecesY) * j, pzl.pieces[i][j].image);
                 else
-                    EcranGraphique.drawImage(x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.colonne,
-                            y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.ligne, pzl.pieces[i][j].image);
+                    EcranGraphique.drawImage(x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.x,
+                            y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.y, pzl.pieces[i][j].image);
             }
         }
 
@@ -157,8 +160,8 @@ class Puzzle
                     {
                         pzl.pieces[l][k].image[i][j] = image[l * (imgLarg / nbPiecesX) + i]
                                                             [k * (imgHaut / nbPiecesY) + j];
-                        pzl.pieces[l][k].pos.ligne = l;
-                        pzl.pieces[l][k].pos.colonne = k;
+                        pzl.pieces[l][k].pos.y = l;
+                        pzl.pieces[l][k].pos.x = k;
                         pzl.pieces[l][k].placee = false;
                     }
                 }
@@ -172,7 +175,15 @@ class Puzzle
      */
     public static void jouer(PuzzleJeu pzl)
     {
+        boolean continuer = true;
+        while(continuer)
+        {
+            attendClic();
+            afficher(pzl);
 
+            if(EcranGraphique.getKey() == 'a')
+                continuer = false;
+        }
     }
 
     /**
@@ -215,8 +226,8 @@ class Puzzle
         {
             for(int i = 0; i < nbPiecesX; i++)
             {
-                pzl.pieces[i][j].pos.colonne = positions[j*(nbPiecesX)+i] % nbPiecesX;
-                pzl.pieces[i][j].pos.ligne = (int)(positions[j*(nbPiecesX)+i] / nbPiecesX);
+                pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
+                pzl.pieces[i][j].pos.y = (int)(positions[j*(nbPiecesX)+i] / nbPiecesX);
             }
         }
     }
@@ -239,6 +250,8 @@ class Puzzle
     public static Position2D attendClic()
     {
         Position2D clic = new Position2D();
+
+
 
         return clic;
     }
