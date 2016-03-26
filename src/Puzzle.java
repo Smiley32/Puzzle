@@ -30,7 +30,7 @@ class Puzzle
 
     public static void main(String[] args)
     {
-        E.ln("Juste une fenÃªtre"); // Juste un texte en console
+        E.ln("Juste une fenêtre"); // Juste un texte en console
 
         EcranGraphique.init(50, 50, 1280, 720, 1280, 720, "Puzzle"); // Init de la fenetre
         EcranGraphique.setClearColor(255, 255, 255);
@@ -64,7 +64,7 @@ class Puzzle
 
     /**
      * Affichage du puzzle
-     * @param pzl  puzzle Ã  afficher
+     * @param pzl  puzzle à afficher
      */
     public static void afficher(PuzzleJeu pzl)
     {
@@ -81,7 +81,6 @@ class Puzzle
 
         /*int x1 = 10;
         int y1 = 10;
-
         int x2 = x1 + imgLarg + 100;
         int y2 = y1;*/
 
@@ -118,61 +117,46 @@ class Puzzle
 
     /**
      * Fonction qui dit si le puzzle est fini
-     * @param pzl   puzzle Ã  vÃ©rifier
+     * @param pzl   puzzle à vérifier
      * @return      vrai si le puzzle est fini
      */
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
+    
         /*
             ERREURS :
-
             Dans un while, il n'y a qu'une condition
             LE PRINCIPE DU WHILE N'EST PAS JUSTE DE REMPLACER FOR !!!!!
             IL FAUT AUSSI REMPLACER LE RESTE
-
             le if ne servira a rien
-
             tu ne declare pas i
-
             TES WHILES NE SERVENT A RIEN.
-
-            Reflechis un peu avant de poster Ã§a...
-
+            Reflechis un peu avant de poster ça...
             Si tu ne sais pas, va voir ta fiche PDL/Java, pour voir comment marche un while
          */
-<<<<<<< HEAD
-        //JE SAIS PAS SI SA MARCHE PAS LA PEINE DE M'INSULTER SI CA MARCHE PAS !!!
-        int j=0,i=0;
-        boolean b1 = true;
+	//JE SAIS PAS SI SA MARCHE PAS LA PEINE DE M'INSULTER SI CA MARCHE PAS !!!
+		int j=0,i=0;
+		boolean b1 = true;
 		do
-		{				
-			while(pzl.pieces[i][j].placee == false)//int j =0; j < nbPiecesY; j++
-=======
-        boolean bl = true;
-		/*do
 		{
-			while(int j =0; j < nbPiecesY; j++)
->>>>>>> origin/master
-            {
-                j++;
-                 b1= false;
-            }
-<<<<<<< HEAD
-        i=i+1;
-        } while (i < nbPiecesX); //int i = 0; ; i++
+			while(pzl.pieces[i][j].placee == false)
+			{
+			j++;
+			b1= false;
+			}
 
-        return b1;
-=======
-		}
-        while (int i = 0; i < nbPiecesX; i++);*/
-        return bl;
->>>>>>> origin/master
-    }
+		i=i+1;
+		} while (i < nbPiecesX); 
+		return b1;
+
+	}
+
+    
 
     /**
      * Initialisation du puzzle
-     * @param pzl   puzzle Ã  initialiser
-     * @param image image Ã  mÃ©langer
+     * @param pzl   puzzle à initialiser
+     * @param image image à mélanger
      */
     public static void initialiser(PuzzleJeu pzl, int[][] image)
     {
@@ -180,7 +164,7 @@ class Puzzle
         pzl.nbCoups = 0;
         pzl.pieces = new Piece[nbPiecesX][nbPiecesY];
 
-        // DÃ©claration de toutes les cases
+        // Déclaration de toutes les cases
         for(int j = 0; j < nbPiecesY; j++)
         {
             for(int i = 0; i < nbPiecesX; i++)
