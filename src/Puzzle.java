@@ -120,15 +120,16 @@ class Puzzle
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
         boolean bl = true;
-		for (int i = 0; i < nbPiecesX; i++)
+		do
 		{				
-			for(int j =0; j < nbPiecesY; j++)
+			while(int j =0; j < nbPiecesY; j++)
             {
                 if (pzl.pieces[i][j].placee == false) {
                     bl = false;
                 }
             }
 		}
+        while (int i = 0; i < nbPiecesX; i++);
         return bl;
     }
 
