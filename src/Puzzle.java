@@ -74,8 +74,7 @@ class Puzzle
      */
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
-        boolean bl = false;
-                boolean bl = true;
+        boolean bl = true;
 		for (int i = 0; i < nbPiecesX; i++)
 		{				
 			for(int j =0; j < nbPiecesY; j++)
@@ -87,8 +86,6 @@ class Puzzle
 			}			
 			
 		}
-        return bl;
-        
         return bl;
     }
 
