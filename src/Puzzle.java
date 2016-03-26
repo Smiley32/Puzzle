@@ -1,5 +1,3 @@
-import javax.swing.text.Position;
-
 /**
  * Created by Smiley on 02/03/2016.
  */
@@ -30,7 +28,7 @@ class Puzzle
 
     public static void main(String[] args)
     {
-        E.ln("Juste une fenêtre"); // Juste un texte en console
+        E.ln("Juste une fenetre"); // Juste un texte en console
 
         EcranGraphique.init(50, 50, 1280, 720, 1280, 720, "Puzzle"); // Init de la fenetre
         EcranGraphique.setClearColor(255, 255, 255);
@@ -64,7 +62,7 @@ class Puzzle
 
     /**
      * Affichage du puzzle
-     * @param pzl  puzzle à afficher
+     * @param pzl  puzzle a afficher
      */
     public static void afficher(PuzzleJeu pzl)
     {
@@ -107,8 +105,8 @@ class Puzzle
                     EcranGraphique.drawImage(x1 + (imgLarg / nbPiecesX) * i,
                              y1 + (imgHaut / nbPiecesY) * j, pzl.pieces[i][j].image);
                 else
-                    EcranGraphique.drawImage(x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.x,
-                            y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.y, pzl.pieces[i][j].image);
+                    EcranGraphique.drawImage(pzl.pieces[i][j].pos.x,
+                            pzl.pieces[i][j].pos.y, pzl.pieces[i][j].image);
             }
         }
 
@@ -117,26 +115,27 @@ class Puzzle
 
     /**
      * Fonction qui dit si le puzzle est fini
-     * @param pzl   puzzle à vérifier
+     * @param pzl   puzzle a verifier
      * @return      vrai si le puzzle est fini
      */
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
-    
-        /*
-            ERREURS :
-            Dans un while, il n'y a qu'une condition
-            LE PRINCIPE DU WHILE N'EST PAS JUSTE DE REMPLACER FOR !!!!!
-            IL FAUT AUSSI REMPLACER LE RESTE
-            le if ne servira a rien
-            tu ne declare pas i
-            TES WHILES NE SERVENT A RIEN.
-            Reflechis un peu avant de poster ça...
-            Si tu ne sais pas, va voir ta fiche PDL/Java, pour voir comment marche un while
-         */
-	//JE SAIS PAS SI SA MARCHE PAS LA PEINE DE M'INSULTER SI CA MARCHE PAS !!!
-		int j=0,i=0;
+		int j = 0, i = 0;
 		boolean b1 = true;
+
+        /*ERREURS :
+            Faire un do while te fait faire un tour de trop car il teste la condition a la fin (j'ai corrige)
+            Ensuite, ton j n'augmente que si tu entre dans la boucle.
+            De plus, tu as perdu l'interet du tant que car tu ne lui dit pas de s'arreter quand b1 = false
+            Enfin, quand tu incremente j dans ton deuxieme while, tu l'incremente meme si il est egal (ou depasse
+                                                                                                            nbPiecesY)
+
+            AIDE :
+                dans tes tant que, tu dois avoir deux conditions : ne pas depasser les cases max,
+                                                                et arreter si b1 = false.
+
+         */
+
 		do
 		{
 			while(pzl.pieces[i][j].placee == false)
@@ -146,7 +145,8 @@ class Puzzle
 			}
 
 		i=i+1;
-		} while (i < nbPiecesX); 
+		} while (i <= nbPiecesX);
+
 		return b1;
 
 	}
@@ -155,8 +155,8 @@ class Puzzle
 
     /**
      * Initialisation du puzzle
-     * @param pzl   puzzle à initialiser
-     * @param image image à mélanger
+     * @param pzl   puzzle a initialiser
+     * @param image image a malanger
      */
     public static void initialiser(PuzzleJeu pzl, int[][] image)
     {
@@ -164,7 +164,7 @@ class Puzzle
         pzl.nbCoups = 0;
         pzl.pieces = new Piece[nbPiecesX][nbPiecesY];
 
-        // Déclaration de toutes les cases
+        // Declaration de toutes les cases
         for(int j = 0; j < nbPiecesY; j++)
         {
             for(int i = 0; i < nbPiecesX; i++)
@@ -186,8 +186,8 @@ class Puzzle
                     {
                         pzl.pieces[l][k].image[i][j] = image[l * (imgLarg / nbPiecesX) + i]
                                                             [k * (imgHaut / nbPiecesY) + j];
-                        pzl.pieces[l][k].pos.y = l;
-                        pzl.pieces[l][k].pos.x = k;
+                        pzl.pieces[l][k].pos.y = -1;
+                        pzl.pieces[l][k].pos.x = -1;
                         pzl.pieces[l][k].placee = false;
                     }
                 }
@@ -217,100 +217,18 @@ class Puzzle
      */
     public static void jouerCoup(PuzzleJeu pzl)
     {
-        // Case selectionnee (doit correspondre a une piece non placee)
-        Position2D caseSelec = new Position2D();
-        caseSelec.x = -1;
-        caseSelec.y = -1;
+        boolean clk = false;
 
-        // Case destination (doit correspondre a une case vide dans la grille)
-        Position2D caseDest = new Position2D();
-        caseDest.x = -1;
-        caseDest.y = -1;
-
-        int x, y;
-        boolean continuer = true;
-
-        while(continuer)
+        if(attendClic())
         {
-            EcranGraphique.wait(16);
-            afficher(pzl);
-
-            // On regarde si le clic est sur une case :
-            if (attendClic()) // Si il y a un clic
-            {
-                // Case selectionnee dans la seconde grille
-                x = (clic.x - x2) / (imgLarg / nbPiecesX + 5);
-                y = (clic.y - y2) / (imgHaut / nbPiecesY + 5);
-                if (x >= 0 && y >= 0 && x < nbPiecesX && y < nbPiecesY) {
-                    // Les cases sont placees selon leur position, il faut donc trouver la case qui a ces positions
-                    Position2D num = new Position2D();
-                    num = posVersNumPiece(pzl, x, y);
-
-                    if (!pzl.pieces[num.x][num.y].placee) {
-                        caseSelec.x = num.x;
-                        caseSelec.y = num.y;
-                    }
-                }
-
-                // Case destination dans la premiere grille
-                x = (clic.x - x1) / (imgLarg / nbPiecesX);
-                y = (clic.y - y1) / (imgHaut / nbPiecesY);
-                if (x >= 0 && y >= 0 && x < nbPiecesX && y < nbPiecesY
-                        && caseSelec.x != -1 && caseSelec.y != -1) // Il faut avoir selec une case pour choisir la dest
-                {
-                    // On verifie qu'il n'y a pas de case placee
-                    if (!pzl.pieces[x][y].placee) {
-                        caseDest.x = x;
-                        caseDest.y = y;
-                    }
-                }
-
-                E.ln(caseSelec.x, caseSelec.y);
-            }
-
-            if(caseDest.x != -1 && caseDest.y != -1)
-            {
-                // verification de la position de la destination
-                if(caseDest.x == caseSelec.x && caseDest.y == caseSelec.y)
-                    pzl.pieces[caseDest.x][caseDest.y].placee = true;
-                else
-                {
-                    caseDest.x = -1;
-                    caseDest.y = -1;
-                }
-            }
-
+            if(clk == false );
         }
 
     }
 
-    public static Position2D posVersNumPiece(PuzzleJeu pzl, int x, int y)
+    public static void surCaseNonPlacee()
     {
-        Position2D num = new Position2D();
-        num.x = -1;
-        num.y = -1;
 
-        boolean trouve = false;
-        int j = 0;
-        int i = 0;
-
-        while(trouve == false && j < nbPiecesY)
-        {
-            i = 0;
-            while(trouve == false && i < nbPiecesX)
-            {
-                if(pzl.pieces[i][j].pos.x == x && pzl.pieces[i][j].pos.y == y)
-                {
-                    num.x = i;
-                    num.y = j;
-                    trouve = true;
-                }
-                i++;
-            }
-            j++;
-        }
-
-        return num;
     }
 
     /**
@@ -344,8 +262,10 @@ class Puzzle
         {
             for(int i = 0; i < nbPiecesX; i++)
             {
-                pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
+                pzl.pieces[i][j].pos.x = (int)(positions[j*(nbPiecesX)+i] % nbPiecesX);
+                pzl.pieces[i][j].pos.x = x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.x;
                 pzl.pieces[i][j].pos.y = (int)(positions[j*(nbPiecesX)+i] / nbPiecesX);
+                pzl.pieces[i][j].pos.y = y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.y;
             }
         }
     }
