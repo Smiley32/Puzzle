@@ -136,18 +136,20 @@ class Puzzle
 
             Si tu ne sais pas, va voir ta fiche PDL/Java, pour voir comment marche un while
          */
-        boolean bl = true;
+        //JE SAIS PAS SI SA MARCHE PAS LA PEINE DE M'INSULTER SI CA MARCHE PAS !!!
+        int j=0,i=0;
+        boolean b1 = true;
 		do
 		{				
-			while(int j =0; j < nbPiecesY; j++)
+			while(pzl.pieces[i][j].placee == false)//int j =0; j < nbPiecesY; j++
             {
-                if (pzl.pieces[i][j].placee == false) {
-                    bl = false;
-                }
+                j++;
+                 b1= false;
             }
-		}
-        while (int i = 0; i < nbPiecesX; i++);
-        return bl;
+        i=i+1;
+        } while (i < nbPiecesX); //int i = 0; ; i++
+
+        return b1;
     }
 
     /**
