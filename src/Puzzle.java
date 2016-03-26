@@ -4,12 +4,12 @@
 class Puzzle
 {
     // Hauteur et largeur de l'image (d'apres l'ennonce, 360*480)
-    public static int imgLarg = 360;
-    public static int imgHaut = 480;
+    public static final int imgLarg = 360;
+    public static final int imgHaut = 480;
 
     // Nombre de pieces (d'apres l'ennonce, 3*4)
-    public static int nbPiecesX = 3;
-    public static int nbPiecesY = 4;
+    public static final int nbPiecesX = 3;
+    public static final int nbPiecesY = 4;
 
     public static int rand(int min, int max) // fct aleatoire
     {
@@ -20,16 +20,17 @@ class Puzzle
     {
         E.ln("Juste une fenêtre"); // Juste un texte en console
 
-        EcranGraphique.init(50, 50, 669, 552, 640, 480, "Puzzle"); // Init de la fenetre
+        EcranGraphique.init(50, 50, 1280, 720, 1280, 720, "Puzzle"); // Init de la fenetre
         EcranGraphique.setClearColor(255, 255, 255);
         EcranGraphique.clear();
 
         PuzzleJeu pzl = new PuzzleJeu();
         initialiser(pzl, saisirImage());
-        EcranGraphique.drawImage(0, 0, pzl.pieces[0][2].image);
+        // EcranGraphique.drawImage(0, 0, pzl.pieces[0][2].image);
         melanger(pzl);
-        E.ln("X : " + pzl.pieces[0][2].pos.colonne + " ; Y : " + pzl.pieces[0][1].pos.ligne);
-        EcranGraphique.flush();
+        // E.ln("X : " + pzl.pieces[0][2].pos.colonne + " ; Y : " + pzl.pieces[0][1].pos.ligne);
+        afficher(pzl);
+        // EcranGraphique.flush();
     }
     
     static class Piece
@@ -49,7 +50,7 @@ class Puzzle
         int nbCoups;
         Piece[][] pieces;
         long temps;
-        int tx, ty;
+        // int tx, ty;
     }
 
     /**
@@ -65,6 +66,42 @@ class Puzzle
         booleen placee a faux. s'il est a vrai, la piece ne doit
         plus se trouver a droite...
          */
+
+        int x1 = 10;
+        int y1 = 10;
+
+        int x2 = x1 + imgLarg + 100;
+        int y2 = y1;
+
+        pzl.pieces[2][1].placee = true;
+        pzl.pieces[1][1].placee = true;
+
+        // Affichage d'une grille
+        EcranGraphique.setColor(0, 0, 0);
+        for(int i = 0; i <= nbPiecesX; i++)
+        {
+            EcranGraphique.drawLine(x1 + i*(imgLarg / nbPiecesX), y1, x1 + i*(imgLarg / nbPiecesX), y1 + imgHaut);
+        }
+        for(int i = 0; i <= nbPiecesY; i++)
+        {
+            EcranGraphique.drawLine(x1, y1 + i*(imgHaut / nbPiecesY), x1 + imgLarg, y1 + i*(imgHaut / nbPiecesY));
+        }
+
+        // Affichage des pieces
+        for(int j = 0; j < nbPiecesY; j++)
+        {
+            for(int i = 0; i < nbPiecesX; i++)
+            {
+                if(pzl.pieces[i][j].placee)
+                    EcranGraphique.drawImage(x1 + (imgLarg / nbPiecesX) * i,
+                             y1 + (imgHaut / nbPiecesY) * j, pzl.pieces[i][j].image);
+                else
+                    EcranGraphique.drawImage(x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.colonne,
+                            y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.ligne, pzl.pieces[i][j].image);
+            }
+        }
+
+        EcranGraphique.flush();
     }
 
     /**
@@ -78,13 +115,11 @@ class Puzzle
 		for (int i = 0; i < nbPiecesX; i++)
 		{				
 			for(int j =0; j < nbPiecesY; j++)
-			{
-				if( pzl.pieces[i][j].placee == false)    
-				{
-					bl = false;
-				}
-			}			
-			
+            {
+                if (pzl.pieces[i][j].placee == false) {
+                    bl = false;
+                }
+            }
 		}
         return bl;
     }
