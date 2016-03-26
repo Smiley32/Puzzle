@@ -119,6 +119,23 @@ class Puzzle
      */
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
+        /*
+            ERREURS :
+
+            Dans un while, il n'y a qu'une condition
+            LE PRINCIPE DU WHILE N'EST PAS JUSTE DE REMPLACER FOR !!!!!
+            IL FAUT AUSSI REMPLACER LE RESTE
+
+            le if ne servira a rien
+
+            tu ne declare pas i
+            
+            TES WHILES NE SERVENT A RIEN.
+
+            Reflechis un peu avant de poster ça...
+
+            Si tu ne sais pas, va voir ta fiche PDL/Java, pour voir comment marche un while
+         */
         boolean bl = true;
 		do
 		{				
