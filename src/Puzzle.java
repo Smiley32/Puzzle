@@ -1,3 +1,5 @@
+import javax.swing.text.Position;
+
 /**
  * Created by Smiley on 02/03/2016.
  */
@@ -16,6 +18,9 @@ class Puzzle
     public static int y1 = 10;
     public static int x2 = x1 + imgLarg + 100;
     public static int y2 = y1;
+
+    // Pour avoir un clic unique
+    public static boolean clicUnique = true;
 
     public static int rand(int min, int max) // fct aleatoire
     {
@@ -176,9 +181,11 @@ class Puzzle
     public static void jouer(PuzzleJeu pzl)
     {
         boolean continuer = true;
+
+
         while(continuer)
         {
-            attendClic();
+            jouerCoup(pzl);
             afficher(pzl);
 
             if(EcranGraphique.getKey() == 'a')
@@ -192,7 +199,8 @@ class Puzzle
      */
     public static void jouerCoup(PuzzleJeu pzl)
     {
-
+        Position2D clic = new Position2D();
+        clic = attendClic();
     }
 
     /**
@@ -251,7 +259,23 @@ class Puzzle
     {
         Position2D clic = new Position2D();
 
+        if(EcranGraphique.getMouseState() == 0)
+        {
+            clic.x = -1;
+            clic.y = -1;
+            clicUnique = true;
+        }
 
+        if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
+        {
+            if(clicUnique)
+            {
+                clic.x = EcranGraphique.getMouseX();
+                clic.y = EcranGraphique.getMouseY();
+                E.ln(clic.x + " - " + clic.y);
+                clicUnique = false;
+            }
+        }
 
         return clic;
     }
