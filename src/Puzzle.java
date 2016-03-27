@@ -101,10 +101,10 @@ class Puzzle
         {
             for(int i = 0; i < nbPiecesX; i++)
             {
-                if(pzl.pieces[i][j].placee)
-                    EcranGraphique.drawImage(x1 + (imgLarg / nbPiecesX) * i,
-                             y1 + (imgHaut / nbPiecesY) * j, pzl.pieces[i][j].image);
-                else
+                //if(pzl.pieces[i][j].placee)
+                //    EcranGraphique.drawImage(x1 + (imgLarg / nbPiecesX) * i,
+                //             y1 + (imgHaut / nbPiecesY) * j, pzl.pieces[i][j].image);
+                // else
                     EcranGraphique.drawImage(pzl.pieces[i][j].pos.x,
                             pzl.pieces[i][j].pos.y, pzl.pieces[i][j].image);
             }
@@ -219,16 +219,90 @@ class Puzzle
     {
         boolean clk = false;
 
-        if(attendClic())
+        // Case a deplacer
+        Position2D caseADepl = new Position2D();
+
+        int x, y;
+
+        while(true) // Tant que vrai --> Mettre une condition d'arret !
         {
-            if(clk == false );
+            if (attendClic()) { // Si il y a un clic
+                if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { // Si le clic
+                                                                                            // est sur une piece
+                    caseADepl = estSurPiece(pzl);
+
+                    if(pzl.pieces[caseADepl.x][caseADepl.y].placee) // Si la piece etait placee
+                    {
+                        pzl.pieces[caseADepl.x][caseADepl.y].placee = false;
+                    }
+
+                    clk = true; // pour tenir la piece jusqu'au clic suivant
+                }
+                else if(clk == true) // quand on a la piece en main et qu'on clique...
+                {
+                    x = (clic.x - x1) / (imgLarg / nbPiecesX);
+                    y = (clic.y - y1) / (imgHaut / nbPiecesY);
+                    if(x >= 0 && y >= 0 && x < nbPiecesX && y < nbPiecesY)
+                    {
+                        // On met la piece dans sa case si elle est au dessus de la grille
+                        pzl.pieces[caseADepl.x][caseADepl.y].pos.x = x * (imgLarg / nbPiecesX) + x1;
+                        pzl.pieces[caseADepl.x][caseADepl.y].pos.y = y * (imgHaut / nbPiecesY) + y1;
+                    }
+
+                    if(x == caseADepl.x && y == caseADepl.y) // Si elle est au bon endroit
+                    {
+                        pzl.pieces[caseADepl.x][caseADepl.y].placee = true;
+                    }
+
+                    clk = false;
+                }
+            }
+
+            // On fait suivre le curseur par la piece
+            if (clk) {
+                pzl.pieces[caseADepl.x][caseADepl.y].pos.x = EcranGraphique.getMouseX() - (imgLarg / nbPiecesX)/2;
+                pzl.pieces[caseADepl.x][caseADepl.y].pos.y = EcranGraphique.getMouseY() - (imgHaut / nbPiecesY)/2;
+            }
+
+            // On affiche le tout
+            afficher(pzl);
+            EcranGraphique.wait(16);
         }
 
     }
 
-    public static void surCaseNonPlacee()
+    public static Position2D estSurPiece(PuzzleJeu pzl)
     {
+        boolean est = false;
+        int i = 0;
+        int j = 0;
+        Position2D pos = new Position2D();
 
+        while(est == false && j < nbPiecesY)
+        {
+            i = 0;
+            while(est == false && i < nbPiecesX)
+            {
+                est = clic.x >= pzl.pieces[i][j].pos.x && clic.x <= pzl.pieces[i][j].pos.x + (int)(imgLarg / nbPiecesX)
+                        && clic.y >= pzl.pieces[i][j].pos.y && clic.y <= pzl.pieces[i][j].pos.y
+                                                                                    + (int)(imgHaut / nbPiecesY);
+                               // && !pzl.pieces[i][j].placee;
+                if(est)
+                {
+                    pos.x = i;
+                    pos.y = j;
+                }
+                else
+                {
+                    pos.x = -1;
+                    pos.y = -1;
+                }
+                i++;
+            }
+            j++;
+        }
+
+        return pos;
     }
 
     /**
