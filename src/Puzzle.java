@@ -136,16 +136,17 @@ class Puzzle
 
          */
 
-		do
+        while (i <= nbPiecesX &&  b1 == false)
 		{
-			while(pzl.pieces[i][j].placee == false)
+            i++;
+            j++;
+			while(j <= nbPiecesY && pzl.pieces[i][j].placee == false && b1 == false)
 			{
-			j++;
 			b1= false;
 			}
 
-		i=i+1;
-		} while (i <= nbPiecesX);
+
+		}
 
 		return b1;
 
