@@ -110,6 +110,15 @@ class Puzzle
             }
         }
 
+        // fin du jeu
+        if(estReconstitue(pzl))
+        {
+            EcranGraphique.drawText(x2, 50, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
+                    + pzl.nbCoups + " coups !");
+            EcranGraphique.drawText(x2, 70, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
+                                                                                           " ou bien quitte le jeu");
+        }
+
         EcranGraphique.flush();
     }
 
@@ -216,14 +225,24 @@ class Puzzle
     {
         boolean continuer = true;
 
-
         while(!estReconstitue(pzl))
         {
             jouerCoup(pzl);
-
+            pzl.nbCoups++;
         }
-        if(estReconstitue(pzl))
-            E.ln("Bien joue !");
+
+        while(estReconstitue(pzl))
+        {
+            afficher(pzl);
+            if(attendClic())
+            {
+                pzl = null;
+                pzl = new PuzzleJeu();
+                initialiser(pzl, saisirImage());
+                melanger(pzl);
+                jouer(pzl);
+            }
+        }
     }
 
     /**
@@ -263,6 +282,7 @@ class Puzzle
                         // On met la piece dans sa case si elle est au dessus de la grille
                         pzl.pieces[caseADepl.x][caseADepl.y].pos.x = x * (imgLarg / nbPiecesX) + x1;
                         pzl.pieces[caseADepl.x][caseADepl.y].pos.y = y * (imgHaut / nbPiecesY) + y1;
+                        finDuCoup = true;
                     }
 
                     if(x == caseADepl.x && y == caseADepl.y) // Si elle est au bon endroit
@@ -271,7 +291,6 @@ class Puzzle
                     }
 
                     clk = false;
-                    finDuCoup = true;
                 }
             }
 
@@ -367,8 +386,8 @@ class Puzzle
      */
     public static int[][] saisirImage()
     {
-        int[][] img = new int[imgHaut][imgLarg];
-        img = EcranGraphique.loadPNGFile("image.png");
+        int[][] img;
+        img = EcranGraphique.loadPNGFile(rand(1, 13) + ".png");
         return img;
     }
 
