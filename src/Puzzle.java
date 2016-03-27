@@ -82,8 +82,8 @@ class Puzzle
         int x2 = x1 + imgLarg + 100;
         int y2 = y1;*/
 
-        pzl.pieces[2][1].placee = true;
-        pzl.pieces[1][1].placee = true;
+        // pzl.pieces[2][1].placee = true;
+        // pzl.pieces[1][1].placee = true;
 
         // Affichage d'une grille
         EcranGraphique.setColor(0, 0, 0);
@@ -120,35 +120,47 @@ class Puzzle
      */
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
-		int j = 0, i = 0;
-		boolean b1 = true;
+		int i = 0;
+        int j = 0;
+		boolean reconstituee = true;
 
-        /*ERREURS :
-            Faire un do while te fait faire un tour de trop car il teste la condition a la fin (j'ai corrige)
-            Ensuite, ton j n'augmente que si tu entre dans la boucle.
-            De plus, tu as perdu l'interet du tant que car tu ne lui dit pas de s'arreter quand b1 = false
-            Enfin, quand tu incremente j dans ton deuxieme while, tu l'incremente meme si il est egal (ou depasse
-                                                                                                            nbPiecesY)
+        /* Tu devrais lire ce que dit ton algo :
+            - Tant que i est inferieur ou egal a nbPiecesX (donc i : 0,1,2,3) ET que reconstituee est faux
+                     (or reconstituee est a true au depart donc on n'entre meme pas dans la boucle), alors:
+                     *
 
-            AIDE :
-                dans tes tant que, tu dois avoir deux conditions : ne pas depasser les cases max,
-                                                                et arreter si b1 = false.
-
-         */
-
-        while (i <= nbPiecesX &&  b1 == false)
+        */
+        /*
+        while (i <= nbPiecesX &&  reconstituee == false) // Un tour de trop // Il faut tester reconstituee == true
 		{
-            i++;
+            i++; // i et j seront tjrs egaux
             j++;
-			while(j <= nbPiecesY && pzl.pieces[i][j].placee == false && b1 == false)
+			while(j <= nbPiecesY && pzl.pieces[i][j].placee == false && reconstituee == false) // Un tour de trop
+			                                                               // Il faut tester reconstituee == true
 			{
 			b1= false;
 			}
 
 
-		}
+		}*/
 
-		return b1;
+        // CORRECTION :
+
+        while(i < nbPiecesX && reconstituee) // Tant qu'on n'a pas trouve de case non placee
+        {
+            j = 0; // On remet a zero j pour compter a partir de zero a chaque tour
+            while(j < nbPiecesY && reconstituee) // Tant qu'on n'a pas trouve de case non placee
+            {
+                if(!pzl.pieces[i][j].placee)
+                {
+                    reconstituee = false;
+                }
+                j++; // incrementation de j a chaque tour de la boucle interieure
+            }
+            i++; // incrementation de i a chaque tour de la premiere boucle
+        }
+
+		return reconstituee;
 
 	}
 
@@ -205,11 +217,13 @@ class Puzzle
         boolean continuer = true;
 
 
-        while(continuer)
+        while(!estReconstitue(pzl))
         {
             jouerCoup(pzl);
 
         }
+        if(estReconstitue(pzl))
+            E.ln("Bien joue !");
     }
 
     /**
@@ -219,13 +233,14 @@ class Puzzle
     public static void jouerCoup(PuzzleJeu pzl)
     {
         boolean clk = false;
+        boolean finDuCoup = false;
 
         // Case a deplacer
         Position2D caseADepl = new Position2D();
 
         int x, y;
 
-        while(true) // Tant que vrai --> Mettre une condition d'arret !
+        while(!finDuCoup)
         {
             if (attendClic()) { // Si il y a un clic
                 if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { // Si le clic
@@ -256,6 +271,7 @@ class Puzzle
                     }
 
                     clk = false;
+                    finDuCoup = true;
                 }
             }
 
