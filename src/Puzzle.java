@@ -1,5 +1,5 @@
 /**
- * Created by Smiley on 02/03/2016.
+ * Projet n°2 (Puzzle) - Jeannin Emile, Mottet Theo - I4 CMI
  */
 public class Puzzle
 {
@@ -113,6 +113,8 @@ public class Puzzle
         Menu mn;
         /** Position de la case actuellement choisie par l'utilisateur. Est a (-1, -1) si il n'y en a pas **/
         Position2D caseChoisie;
+        /** Grille du placement des cases : 0 -> aucune case; 1 -> Contient une case bien placee; 2-> contient une case mal placee **/
+        int[][] placements;
         // int tx, ty;
     }
 
@@ -235,7 +237,7 @@ public class Puzzle
         if(estReconstitue(pzl))
         {
             EcranGraphique.drawText(x2, 50, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
-                    + pzl.nbCoups + " coups !");
+                    + pzl.nbCoups + " coups en " + pzl.temps/1000 + " secondes");
             EcranGraphique.drawText(x2, 70, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
         }
@@ -278,8 +280,6 @@ public class Puzzle
         return reconstituee;
     }
 
-
-
     /**
      * Initialisation du puzzle
      * @param pzl   puzzle a initialiser
@@ -288,8 +288,10 @@ public class Puzzle
     public static void initialiser(PuzzleJeu pzl, int[][] image)
     {
         // Initialisation des premieres variables
-        pzl.temps = 0;
+        pzl.temps = java.lang.System.currentTimeMillis();
         pzl.nbCoups = 0;
+        
+        pzl.caseChoisie = new Position2D();
         pzl.caseChoisie.x = -1;
         pzl.caseChoisie.y = -1;
         
@@ -297,6 +299,7 @@ public class Puzzle
         pzl.pieces = new Piece[nbPiecesX][nbPiecesY]; // Tableau des pieces
         pzl.caseChoisie = new Position2D(); // Position de la case choisie
         pzl.mn = new Menu(); // Menu
+        pzl.placements = new int[nbPiecesX][nbPiecesY];
 
         // Declaration et initialisation des boutons du Menu
         
@@ -323,6 +326,15 @@ public class Puzzle
         pzl.mn.taille6x8.y = pzl.mn.taille3x4.y + 35;
         pzl.mn.taille6x8.larg = 10 * pzl.mn.taille6x8.label.length();
         pzl.mn.taille6x8.haut = 25;
+        
+        // Mise a zero de la grille des placements : elle est vide au depart
+        for(int j = 0; j < nbPiecesY; j++)
+        {
+            for(int i = 0; i < nbPiecesX; i++)
+            {
+                pzl.placements[i][j] = 0;
+            }
+        }
 
         // Declarations
         for(int j = 0; j < nbPiecesY; j++)
@@ -380,7 +392,9 @@ public class Puzzle
             jouer(pzl); // Et on rejoue :)
         }
 
+        
         // Si l'image est reconstituee, on attend que l'utilisateur clique quelque part pour lancer une nouvelle partie
+        pzl.temps = java.lang.System.currentTimeMillis() - pzl.temps;
         while(estReconstitue(pzl))
         {
             afficher(pzl); // On continue a afficher
@@ -412,9 +426,16 @@ public class Puzzle
         while(!finDuCoup && !relancer)
         {
             if (attendClic()) { // Si il y a un clic
-                if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { // Si le clic
-                    // est sur une piece
+                if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
+                                                                   est sur une piece et qu'on ne tenait pas de piece */
                     pzl.caseChoisie = estSurPiece(pzl);
+                    
+                    c = (clic.x - x1) / (imgLarg / nbPiecesX);
+                    l = (clic.y - y1) / (imgHaut / nbPiecesY);
+                    if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY) // Si le curseur etait au dessus de la grille
+                    {
+                        pzl.placements[c][l] = 0; // On indique qu'il n'y a plus de piece dans la case correspondante
+                    }
 
                     if(pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].placee) // Si la piece etait placee
                     {
@@ -427,21 +448,38 @@ public class Puzzle
                 {
                     c = (clic.x - x1) / (imgLarg / nbPiecesX);
                     l = (clic.y - y1) / (imgHaut / nbPiecesY);
-                    if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY) // On verifie que le curseur est au dessus de la grille
+                    
+                    // On verifie que le curseur est au dessus de la grille et que la case est vide
+                    if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] == 0)
                     {
                         // On met la piece dans sa case (celle sous le curseur) si elle est au dessus de la grille
                         pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = c * (imgLarg / nbPiecesX) + x1;
                         pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = l * (imgHaut / nbPiecesY) + y1;
-
+                        
+                        // On dit a la grille des placements qu'il y a une piece dans cette case
+                        pzl.placements[c][l] = 2;
+                        
+                        if(c == pzl.caseChoisie.x && l == pzl.caseChoisie.y) // Si elle est au bon endroit et que la case est vide
+                        {
+                            pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].placee = true;
+                            // On dit a la grille des placements que la case est bien placee
+                            pzl.placements[c][l] = 1;
+                        }
+                        finDuCoup = true; // On indique que le tour est fini
+                        clk = false; // On indique que l'utilisateur a relache la piece
+                        
                     }
-
-                    if(c == pzl.caseChoisie.x && l == pzl.caseChoisie.y) // Si elle est au bon endroit
+                    else if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] != 0)
                     {
-                        pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].placee = true;
+                        // finDuCoup = false; // Le tour n'est pas fini car on n'a pas lache la piece
+                        clk = true; // Ici, clk = true, mais pas besoin de la repreciser, il est deja a true
                     }
-
-                    finDuCoup = true; // On indique que le tour est fini
-                    clk = false; // On indique que l'utilisateur a relache la piece
+                    else
+                    {
+                        finDuCoup = true; // On indique que le tour est fini
+                        clk = false; // On indique que l'utilisateur a relache la piece
+                    }
+                    
                 }
 
                 // Mise a jour de l'etat des boutons (en cas de clic)
