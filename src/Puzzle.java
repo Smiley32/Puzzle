@@ -85,6 +85,8 @@ public class Puzzle
         boolean placee;
         /** Position de la piece dans la fenetre : la piece bouge librement dans la fenetre **/
         Position2D pos;
+        /** Rotation de la piece : 0, 90, 180 ou 270 **/
+        int rotation;
     }
 
     /**
@@ -268,7 +270,7 @@ public class Puzzle
             j = 0; // On remet a zero j pour compter a partir de zero a chaque tour
             while(j < nbPiecesY && reconstituee) // Tant qu'on n'a pas trouve de case non placee
             {
-                if(!pzl.pieces[i][j].placee)
+                if(!pzl.pieces[i][j].placee || pzl.pieces[i][j].rotation != 0)
                 {
                     reconstituee = false;
                 }
@@ -366,6 +368,76 @@ public class Puzzle
                 }
             }
         }
+        
+        // Melange des pieces
+        melanger(pzl);
+        
+        // Rotation des pieces
+        melangeRotations(pzl);
+    }
+    
+    /**
+     * Faire pivoter de 90 degres vers la droite une piece
+     * @param pc   La piece a retourner de 90 degres
+     */
+    public static void pivoterImage(Piece pc)
+    {
+        // On indique la nouvelle rotation de la piece
+        pc.rotation = pc.rotation + 90;
+        pc.rotation = pc.rotation % 360; // Pour que la rotation soit a zero apres 270
+        
+        int[][] imgTrans; // image de transition
+        imgTrans = new int[imgLarg / nbPiecesX][imgHaut / nbPiecesY];
+        
+        // On copie l'ancienne image dans notre image de transition
+        for(int j = 0; j < imgHaut / nbPiecesY; j++)
+        {
+            for(int i = 0; i < imgLarg / nbPiecesX; i++)
+            {
+                imgTrans[i][j] = pc.image[i][j];
+            }
+        }
+        
+        // On copie l'image de transition après l'avoir fait pivotee de 90 degres
+        for(int j = 0; j < imgHaut / nbPiecesY; j++)
+        {
+            for(int i = 0; i < imgLarg / nbPiecesX; i++)
+            {
+                pc.image[(imgHaut / nbPiecesY) - j - 1][i] = imgTrans[i][j];
+            }
+        }
+    }
+    
+    /**
+     * Attribuer aleatoirement a chaque piece une rotation
+     * @param pzl    Le puzzle
+     */
+    public static void melangeRotations(PuzzleJeu pzl)
+    {
+        for(int j = 0; j < nbPiecesY; j++)
+        {
+            for(int i = 0; i < nbPiecesX; i++)
+            {
+                pzl.pieces[i][j].rotation = 0;
+                switch(rand(0, 3))
+                {
+                    case 1:
+                        pivoterImage(pzl.pieces[i][j]); // 90°
+                    break;
+                    case 2:
+                        pivoterImage(pzl.pieces[i][j]); // 90°
+                        pivoterImage(pzl.pieces[i][j]); // 180°
+                    break;
+                    case 3:
+                        pivoterImage(pzl.pieces[i][j]); // 90°
+                        pivoterImage(pzl.pieces[i][j]); // 180°
+                        pivoterImage(pzl.pieces[i][j]); // 270°
+                    break;
+                    default:
+                        pzl.pieces[i][j].rotation = 0; // On ne fait rien
+                }
+            }
+        }
     }
 
     /**
@@ -388,22 +460,21 @@ public class Puzzle
             pzl = null; // On libere le puzzle actuel
             pzl = new PuzzleJeu(); // On en declare un nouveau
             initialiser(pzl, saisirImage()); // On l'initialise
-            melanger(pzl); // On melange les pieces
+            // melanger(pzl); // On melange les pieces --> fait dans initialiser
             jouer(pzl); // Et on rejoue :)
         }
-
         
         // Si l'image est reconstituee, on attend que l'utilisateur clique quelque part pour lancer une nouvelle partie
         pzl.temps = java.lang.System.currentTimeMillis() - pzl.temps;
         while(estReconstitue(pzl))
         {
             afficher(pzl); // On continue a afficher
-            if(attendClic()) // On attend le clic
+            if(attendClic() != 0) // On attend le clic
             {
                 pzl = null; // On libere le puzzle actuel
                 pzl = new PuzzleJeu(); // On en declare un nouveau
                 initialiser(pzl, saisirImage()); // On l'initialise
-                melanger(pzl); // On melange les pieces
+                // melanger(pzl); // On melange les pieces --> fait dans initialiser
                 jouer(pzl); // On peut rejouer
             }
             EcranGraphique.wait(16);
@@ -422,10 +493,13 @@ public class Puzzle
         boolean relancer = false; // Si on veut changer de puzzle
 
         int c, l; // colonne et ligne du clic de l'utilisateur
+        
+        int clicAttendu = 0;
 
         while(!finDuCoup && !relancer)
         {
-            if (attendClic()) { // Si il y a un clic
+            clicAttendu = attendClic();
+            if (clicAttendu == 1) { // Si il y a un clic gauche
                 if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
                                                                    est sur une piece et qu'on ne tenait pas de piece */
                     pzl.caseChoisie = estSurPiece(pzl);
@@ -511,6 +585,14 @@ public class Puzzle
                 }
                 else
                     pzl.mn.taille6x8.appui = false;
+            }
+            else if(clicAttendu == 2)
+            {
+                if (estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) // si on ne cliquait pas et qu'on est sur une piece
+                {
+                    pivoterImage(pzl.pieces[estSurPiece(pzl).x][estSurPiece(pzl).y]); // On fait pivoter la piece
+                    finDuCoup = true; // On indique que le tour est fini
+                }
             }
 
             // On fait suivre le curseur par la piece
@@ -653,18 +735,18 @@ public class Puzzle
 
     /**
      * Retourne la position du clic
-     * @return   la position du clic
+     * @return  1 si il y a eu clic gauche, 2 pour clic droit, 0 sinon
      */
-    public static boolean attendClic()
+    public static int attendClic()
     {
-        boolean clique = false;
+        int clique = 0;
 
         if(EcranGraphique.getMouseState() == 0)
         {
             clic.x = -1;
             clic.y = -1;
             clicUnique = true;
-            clique = false;
+            clique = 0;
         }
 
         if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
@@ -673,9 +755,18 @@ public class Puzzle
             {
                 clic.x = EcranGraphique.getMouseX();
                 clic.y = EcranGraphique.getMouseY();
-                E.ln(clic.x + " - " + clic.y);
                 clicUnique = false;
-                clique = true;
+                clique = 1;
+            }
+        }
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
+        {
+            if(clicUnique)
+            {
+                clic.x = EcranGraphique.getMouseX();
+                clic.y = EcranGraphique.getMouseY();
+                clicUnique = false;
+                clique = 2;
             }
         }
 
