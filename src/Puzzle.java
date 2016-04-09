@@ -20,13 +20,27 @@ public class Puzzle
      * Nombre de pieces en Y (d'apres l'ennonce, 4 ; peut passer a 8)
      */
     public static int nbPiecesY = 4;
+    
+    /**
+     * Indique si la rotation des pieces est activee ou non
+     */
+    public static boolean rotation = true;
 
     /**
-     * Position de la grille et position du debut d'afichage des pieces au debut d'un nouveau jeu
+     * Position de la grille en X
      */
     public static int x1 = 10;
+    /**
+     * Position de la grille en Y
+     */
     public static int y1 = 10;
+    /**
+     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en X
+     */
     public static int x2 = x1 + imgLarg + 100;
+    /**
+     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en Y
+     */
     public static int y2 = y1;
 
     /**
@@ -53,7 +67,7 @@ public class Puzzle
 
     /**
      * Fonction principale avec les premieres initialisations
-     * @param args
+     * @param args  tableau de chaines de caracteres qui sont les arguments envoyes a l'application
      */
     public static void main(String[] args)
     {
@@ -115,7 +129,7 @@ public class Puzzle
         Menu mn;
         /** Position de la case actuellement choisie par l'utilisateur. Est a (-1, -1) si il n'y en a pas **/
         Position2D caseChoisie;
-        /** Grille du placement des cases : 0 -> aucune case; 1 -> Contient une case bien placee; 2-> contient une case mal placee **/
+        /** Grille du placement des cases. 0 : aucune case; 1 : Contient une case bien placee; 2 : contient une case mal placee **/
         int[][] placements;
         // int tx, ty;
     }
@@ -131,10 +145,12 @@ public class Puzzle
         Bouton taille3x4;
         /** Bouton pour choisir le nombre de pieces : 6x8 **/
         Bouton taille6x8;
+        /** Bouton pour activer la rotation des pieces **/
+        Bouton activRotation;
     }
 
     /**
-     * Type agrege Bouton : permet de symboliser un bouton, qu'on pourra sur voler et cliquer, contenant un texte
+     * Type agrege Bouton : permet de symboliser un bouton, qu'on pourra survoler et cliquer, contenant un texte
      */
     static class Bouton
     {
@@ -248,6 +264,7 @@ public class Puzzle
         drawBouton(pzl.mn.relanc);
         drawBouton(pzl.mn.taille3x4);
         drawBouton(pzl.mn.taille6x8);
+        drawBouton(pzl.mn.activRotation);
 
         // Mise a jour de l'affichage
         EcranGraphique.flush();
@@ -329,6 +346,14 @@ public class Puzzle
         pzl.mn.taille6x8.larg = 10 * pzl.mn.taille6x8.label.length();
         pzl.mn.taille6x8.haut = 25;
         
+        // Bouton activation rotation des pieces
+        pzl.mn.activRotation = new Bouton();
+        pzl.mn.activRotation.label = "Rotation des pieces";
+        pzl.mn.activRotation.x = pzl.mn.relanc.x;
+        pzl.mn.activRotation.y = pzl.mn.taille6x8.y + 35;
+        pzl.mn.activRotation.larg = 10 * pzl.mn.activRotation.label.length();
+        pzl.mn.activRotation.haut = 25;
+        
         // Mise a zero de la grille des placements : elle est vide au depart
         for(int j = 0; j < nbPiecesY; j++)
         {
@@ -372,8 +397,9 @@ public class Puzzle
         // Melange des pieces
         melanger(pzl);
         
-        // Rotation des pieces
-        melangeRotations(pzl);
+        // Rotation des pieces si la rotation est activee
+        if(rotation)
+            melangeRotations(pzl);
     }
     
     /**
@@ -483,7 +509,7 @@ public class Puzzle
 
     /**
      * Attend que l'utilisateur joue un coup : l'utilisateur prend une piece et la repose
-     * @param pzl
+     * @param pzl  Le puzzle entier
      * @return     Un booleen : vrai si il faut changer de puzzle
      */
     public static boolean jouerCoup(PuzzleJeu pzl)
@@ -585,10 +611,19 @@ public class Puzzle
                 }
                 else
                     pzl.mn.taille6x8.appui = false;
+                
+                if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
+                {
+                    pzl.mn.activRotation.appui = true;
+                    rotation = !rotation; // On inverse rotation
+                    relancer = true; // On change aussi de puzzle
+                }
+                else
+                    pzl.mn.taille6x8.appui = false;
             }
             else if(clicAttendu == 2)
             {
-                if (estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) // si on ne cliquait pas et qu'on est sur une piece
+                if (estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1 && rotation) // si on ne cliquait pas et qu'on est sur une piece et que la rotation est activee
                 {
                     pivoterImage(pzl.pieces[estSurPiece(pzl).x][estSurPiece(pzl).y]); // On fait pivoter la piece
                     finDuCoup = true; // On indique que le tour est fini
@@ -614,6 +649,10 @@ public class Puzzle
                 pzl.mn.taille6x8.survol = true;
             else
                 pzl.mn.taille6x8.survol = false;
+            if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
+                pzl.mn.activRotation.survol = true;
+            else
+                pzl.mn.activRotation.survol = false;
 
             // On affiche le tout
             if(!relancer) // Pour ne pas avoir de pb dans le nb de cases a afficher lorsqu'on change le nombre de pieces
@@ -626,7 +665,7 @@ public class Puzzle
 
     /**
      * Retourne si le curseur est sur une piece ou non
-     * @param pzl    le puzzle a tester
+     * @param pzl    Le puzzle a tester
      * @return    boolean
      */
     public static Position2D estSurPiece(PuzzleJeu pzl)
@@ -665,7 +704,7 @@ public class Puzzle
 
     /**
      * Melange un puzzle
-     * @param pzl
+     * @param pzl Le puzzle a melanger
      */
     public static void melanger(PuzzleJeu pzl)
     {
