@@ -48,11 +48,17 @@ public class Puzzle
      * Ce booleen prend donc la valeur true lors d'un clic (qu'importe la longueur du clic)
      * et prend la valeur false lors du relachement de ce clic grace a la fonction attendClic()
      */
-    public static boolean clicUnique = true;
+    // public static boolean clicUnique = true;
+
     /**
      * Position du clic dans la fenetre. Cette position est mise a jour avec la fonction attendClic()
      */
-    public static Position2D clic = new Position2D();
+    // public static Position2D clic = new Position2D();
+
+    /**
+     * Souris qui est utilisee tout au long du jeu
+     */
+    public static Souris souris = new Souris();
 
     /**
      * Fonction qui tire un entier aleatoire dans [min, max]
@@ -86,6 +92,19 @@ public class Puzzle
         melanger(pzl);
         // On peut jouer !
         jouer(pzl);
+    }
+
+    /**
+     * Type agrege Souris qui represente la souris, son curseur et sa position, si il y a clic ou non
+     */
+    static class Souris
+    {
+        /** Position du curseur **/
+        Position2D pos;
+        /** Booleen qui indique si le clic droit est appuye **/
+        boolean clicDroit = false;
+        /** Boolean qui indique si le clic gauche est appuye **/
+        boolean clicGauche = false;
     }
 
     /**
@@ -279,7 +298,7 @@ public class Puzzle
     public static boolean estReconstitue(PuzzleJeu pzl)
     {
         int i = 0;
-        int j = 0;
+        int j;
         boolean reconstituee = true;
 
         while(i < nbPiecesX && reconstituee) // Tant qu'on n'a pas trouve de case non placee
@@ -313,6 +332,11 @@ public class Puzzle
         pzl.caseChoisie = new Position2D();
         pzl.caseChoisie.x = -1;
         pzl.caseChoisie.y = -1;
+
+        // Souris
+        souris.pos = new Position2D();
+        souris.pos.x = -1;
+        souris.pos.y = -1;
         
         // Declarations
         pzl.pieces = new Piece[nbPiecesX][nbPiecesY]; // Tableau des pieces
@@ -424,7 +448,7 @@ public class Puzzle
             }
         }
         
-        // On copie l'image de transition après l'avoir fait pivotee de 90 degres
+        // On copie l'image de transition apres l'avoir fait pivotee de 90 degres
         for(int j = 0; j < imgHaut / nbPiecesY; j++)
         {
             for(int i = 0; i < imgLarg / nbPiecesX; i++)
@@ -483,7 +507,6 @@ public class Puzzle
 
         if(relancer) // Si on veut un autre puzzle
         {
-            pzl = null; // On libere le puzzle actuel
             pzl = new PuzzleJeu(); // On en declare un nouveau
             initialiser(pzl, saisirImage()); // On l'initialise
             // melanger(pzl); // On melange les pieces --> fait dans initialiser
@@ -495,9 +518,9 @@ public class Puzzle
         while(estReconstitue(pzl))
         {
             afficher(pzl); // On continue a afficher
-            if(attendClic() != 0) // On attend le clic
+            attendClic(); // On attend le clic
+            if(souris.clicDroit || souris.clicGauche) // On attend le clic
             {
-                pzl = null; // On libere le puzzle actuel
                 pzl = new PuzzleJeu(); // On en declare un nouveau
                 initialiser(pzl, saisirImage()); // On l'initialise
                 // melanger(pzl); // On melange les pieces --> fait dans initialiser
@@ -517,21 +540,20 @@ public class Puzzle
         boolean clk = false; // Si il y a un clic
         boolean finDuCoup = false; // Si le tour est fini
         boolean relancer = false; // Si on veut changer de puzzle
+        boolean unClic; // Passe a true si il y a un clic
 
         int c, l; // colonne et ligne du clic de l'utilisateur
-        
-        int clicAttendu = 0;
 
         while(!finDuCoup && !relancer)
         {
-            clicAttendu = attendClic();
-            if (clicAttendu == 1) { // Si il y a un clic gauche
-                if (clk == false && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
+            unClic = attendClic(); // On met a jour l'etat de la souris
+            if (unClic && souris.clicGauche) { // Si il y a un clic gauche
+                if (!clk && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
                                                                    est sur une piece et qu'on ne tenait pas de piece */
                     pzl.caseChoisie = estSurPiece(pzl);
                     
-                    c = (clic.x - x1) / (imgLarg / nbPiecesX);
-                    l = (clic.y - y1) / (imgHaut / nbPiecesY);
+                    c = (souris.pos.x - x1) / (imgLarg / nbPiecesX);
+                    l = (souris.pos.y - y1) / (imgHaut / nbPiecesY);
                     if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY) // Si le curseur etait au dessus de la grille
                     {
                         pzl.placements[c][l] = 0; // On indique qu'il n'y a plus de piece dans la case correspondante
@@ -544,10 +566,10 @@ public class Puzzle
 
                     clk = true; // pour tenir la piece jusqu'au clic suivant
                 }
-                else if(clk == true) // quand on a la piece en main et qu'on clique...
+                else if(clk) // quand on a la piece en main et qu'on clique...
                 {
-                    c = (clic.x - x1) / (imgLarg / nbPiecesX);
-                    l = (clic.y - y1) / (imgHaut / nbPiecesY);
+                    c = (souris.pos.x - x1) / (imgLarg / nbPiecesX);
+                    l = (souris.pos.y - y1) / (imgHaut / nbPiecesY);
                     
                     // On verifie que le curseur est au dessus de la grille et que la case est vide
                     if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] == 0)
@@ -621,7 +643,7 @@ public class Puzzle
                 else
                     pzl.mn.taille6x8.appui = false;
             }
-            else if(clicAttendu == 2)
+            else if(unClic && souris.clicDroit) // Si c'est un clic droit
             {
                 if (estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1 && rotation) // si on ne cliquait pas et qu'on est sur une piece et que la rotation est activee
                 {
@@ -637,22 +659,14 @@ public class Puzzle
             }
 
             // Mise a jour de l'etat des boutons (survol)
-            if(estSurBouton(pzl.mn.relanc)) // Bouton changement de puzzle
-                pzl.mn.relanc.survol = true;
-            else
-                pzl.mn.relanc.survol = false;
-            if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
-                pzl.mn.taille3x4.survol = true;
-            else
-                pzl.mn.taille3x4.survol = false;
-            if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
-                pzl.mn.taille6x8.survol = true;
-            else
-                pzl.mn.taille6x8.survol = false;
-            if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
-                pzl.mn.activRotation.survol = true;
-            else
-                pzl.mn.activRotation.survol = false;
+            // Bouton changement de puzzle
+            pzl.mn.relanc.survol = estSurBouton(pzl.mn.relanc);
+            // Bouton taille 3x4
+            pzl.mn.taille3x4.survol = estSurBouton(pzl.mn.taille3x4);
+            // Bouton taille 6x8
+            pzl.mn.taille6x8.survol = estSurBouton(pzl.mn.taille6x8);
+            // Bouton rotation
+            pzl.mn.activRotation.survol = estSurBouton(pzl.mn.activRotation);
 
             // On affiche le tout
             if(!relancer) // Pour ne pas avoir de pb dans le nb de cases a afficher lorsqu'on change le nombre de pieces
@@ -671,18 +685,18 @@ public class Puzzle
     public static Position2D estSurPiece(PuzzleJeu pzl)
     {
         boolean est = false; // Est sur une piece ou non
-        int i = 0;
+        int i;
         int j = 0;
         Position2D pos = new Position2D();
 
-        while(est == false && j < nbPiecesY)
+        while(!est && j < nbPiecesY)
         {
             i = 0;
-            while(est == false && i < nbPiecesX)
+            while(!est && i < nbPiecesX)
             {
-                est = clic.x >= pzl.pieces[i][j].pos.x && clic.x <= pzl.pieces[i][j].pos.x + (int)(imgLarg / nbPiecesX)
-                        && clic.y >= pzl.pieces[i][j].pos.y && clic.y <= pzl.pieces[i][j].pos.y
-                        + (int)(imgHaut / nbPiecesY);
+                est = (souris.pos.x >= pzl.pieces[i][j].pos.x) && (souris.pos.x <= (pzl.pieces[i][j].pos.x + imgLarg / nbPiecesX))
+                        && (souris.pos.y >= pzl.pieces[i][j].pos.y) && (souris.pos.y <= (pzl.pieces[i][j].pos.y
+                        + (imgHaut / nbPiecesY)));
                 // && !pzl.pieces[i][j].placee;
                 if(est) // Est sur une piece
                 {
@@ -733,16 +747,16 @@ public class Puzzle
         {
             for(int i = 0; i < nbPiecesX; i++)
             {
-                pzl.pieces[i][j].pos.x = (int)(positions[j*(nbPiecesX)+i] % nbPiecesX);
-                pzl.pieces[i][j].pos.x = x2 + (imgLarg / nbPiecesX + 5) * pzl.pieces[i][j].pos.x;
-                pzl.pieces[i][j].pos.y = (int)(positions[j*(nbPiecesX)+i] / nbPiecesX);
-                pzl.pieces[i][j].pos.y = y2 + (imgHaut / nbPiecesY + 5) * pzl.pieces[i][j].pos.y;
+                pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
+                pzl.pieces[i][j].pos.x = x2 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x);
+                pzl.pieces[i][j].pos.y = positions[j*(nbPiecesX)+i] / nbPiecesX;
+                pzl.pieces[i][j].pos.y = y2 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y);
             }
         }
     }
 
     /**
-     * Saisie d'une image : selection aleatoire de l'image parmis celles se trouvant dans /img/
+     * Saisie d'une image : selection aleatoire de l'image parmi celles se trouvant dans /img/
      * @return  l'image (tableau d'entiers)
      */
     public static int[][] saisirImage()
@@ -773,42 +787,36 @@ public class Puzzle
     }
 
     /**
-     * Retourne la position du clic
-     * @return  1 si il y a eu clic gauche, 2 pour clic droit, 0 sinon
+     * Met a jour l'etat de la souris
+     * @return    true si un clic est effectue
      */
-    public static int attendClic()
+    public static boolean attendClic()
     {
-        int clique = 0;
+        boolean ret = false;
+
+        souris.pos.x = EcranGraphique.getMouseX();
+        souris.pos.y = EcranGraphique.getMouseY();
 
         if(EcranGraphique.getMouseState() == 0)
         {
-            clic.x = -1;
-            clic.y = -1;
-            clicUnique = true;
-            clique = 0;
+            if(souris.clicDroit)
+                souris.clicDroit = false;
+            if(souris.clicGauche)
+                souris.clicGauche = false;
         }
-
-        if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
         {
-            if(clicUnique)
-            {
-                clic.x = EcranGraphique.getMouseX();
-                clic.y = EcranGraphique.getMouseY();
-                clicUnique = false;
-                clique = 1;
-            }
+            if(!souris.clicGauche) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
+                ret = true;
+            souris.clicGauche = true;
         }
         else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
         {
-            if(clicUnique)
-            {
-                clic.x = EcranGraphique.getMouseX();
-                clic.y = EcranGraphique.getMouseY();
-                clicUnique = false;
-                clique = 2;
-            }
+            if(!souris.clicDroit) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
+                ret = true;
+            souris.clicDroit = true;
         }
 
-        return clique;
+        return ret;
     }
 }
