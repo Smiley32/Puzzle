@@ -669,6 +669,8 @@ public class Puzzle
         
         // Si l'image est reconstituee, on attend que l'utilisateur clique quelque part pour lancer une nouvelle partie
         pzl.temps = java.lang.System.currentTimeMillis() - pzl.temps;
+        souris.clicDroit = false;
+        souris.clicGauche = false;
         while(estReconstitue(pzl))
         {
             afficher(pzl); // On continue a afficher
