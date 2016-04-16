@@ -142,7 +142,7 @@ public class Puzzle
     static class Piece
     {
         /** Tableau d'entiers qui est l'image contenue dans la piece **/
-        int[][] image;
+        Pixel[][] image;
         /** Si la piece est placee correctement ou non **/
         boolean placee;
         /** Position de la piece dans la fenetre : la piece bouge librement dans la fenetre **/
@@ -205,7 +205,7 @@ public class Puzzle
                 if(i != pzl.caseChoisie.x || j != pzl.caseChoisie.y) /* On n'affiche pas la case tenue pour l'afficher en dernier, afin qu'elle se
                                                                                     trouve au dessus des autres */
                 {
-                    EcranGraphique.drawImage(pzl.pieces[i][j].pos.x,
+                    drawImage(pzl.pieces[i][j].pos.x,
                             pzl.pieces[i][j].pos.y, pzl.pieces[i][j].image);
                 }
             }
@@ -213,7 +213,7 @@ public class Puzzle
 
         // On a affiche presque toutes les pieces, on affiche la case tenue (si il y en a une)
         if(pzl.caseChoisie.x != -1 && pzl.caseChoisie.y != -1)
-            EcranGraphique.drawImage(pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x,
+            drawImage(pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x,
                                      pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y,
                                      pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].image);
 
@@ -313,10 +313,23 @@ public class Puzzle
             for(int i = 0; i < nbPiecesX; i++)
             {
                 pzl.pieces[i][j] = new Piece(); // Chaque piece
-                pzl.pieces[i][j].image = new int[imgLarg / nbPiecesX][imgHaut / nbPiecesY]; // Tableau d'entiers (image)
+                pzl.pieces[i][j].image = new Pixel[imgLarg / nbPiecesX + (imgLarg / nbPiecesX) / 2]
+                        [imgHaut / nbPiecesY + (imgLarg / nbPiecesX)/2]; // Tableau de pixels(image)
                 pzl.pieces[i][j].pos = new Position2D(); // Position de la piece
+
+                for(int l = 0; l < pzl.pieces[i][j].image[0].length; l++)
+                {
+                    for (int k = 0; k < pzl.pieces[i][j].image.length; k++)
+                    {
+                        pzl.pieces[i][j].image[k][l] = new Pixel();
+                        pzl.pieces[i][j].image[k][l].alpha = 0;
+                    }
+                }
             }
         }
+
+        Pixel[][] img = conversion(image);
+        image = null;
 
         // On decoupe l'image en pieces et on initialise les variables restantes
         for(int k = 0; k < nbPiecesY; k++)
@@ -327,8 +340,17 @@ public class Puzzle
                 {
                     for(int i = 0; i < imgLarg / nbPiecesX; i++) // On copie chaque pixel de l'image dans la piece [l][k]
                     {
-                        pzl.pieces[l][k].image[i][j] = image[l * (imgLarg / nbPiecesX) + i]
-                                                            [k * (imgHaut / nbPiecesY) + j];
+                        pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].rouge
+                                = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].rouge;
+                        pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].vert
+                                = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].vert;
+                        pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].bleu
+                                = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].bleu;
+                        pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].alpha
+                                = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].alpha;
+
+                        //imgTemp[l][k] =
+                        //E.ln("IMAGE : " + imgTemp[l][k]);
                         // Position de l'image : pas encore definie
                         pzl.pieces[l][k].pos.y = -1;
                         pzl.pieces[l][k].pos.x = -1;
@@ -337,13 +359,135 @@ public class Puzzle
                 }
             }
         }
+        // On libere les references de l'image car on ne l'utilisera plus
+        img = null;
         
         // Melange des pieces
         melanger(pzl);
+
+        // Ajout des dents sur les cotes
+        bords(pzl);
         
         // Rotation des pieces si la rotation est activee
         if(rotation)
             melangeRotations(pzl);
+    }
+
+    public static void bords(PuzzleJeu pzl)
+    {
+        for(int j = 0; j < nbPiecesY; j++)
+        {
+            for(int i = 0; i < nbPiecesX; i++)
+            {
+                // Bordure de droite de la piece de gauche et bordure de gauche de la piece de droite
+                if(i < nbPiecesX - 1)
+                    bordsHoriz(pzl.pieces[i][j], pzl.pieces[i + 1][j]);
+                if(j < nbPiecesY - 1)
+                    bordsVertic(pzl.pieces[i][j], pzl.pieces[i][j + 1]);
+            }
+        }
+    }
+
+    public static void bordsVertic(Piece pc1, Piece pc2) {
+        int l = 2; // Nombre de cases a remplir
+        if (rand(0, 1) == 0) { // Pour avoir aleatoirement les bords sortants ou entrants
+            for (int i = 0; i < (imgHaut / nbPiecesY) / 4; i++) {
+                for (int j = 0; j < l; j++) {
+                    /**
+                     * On copie les pixels de l'image du dessous en triangle a partir de l'interieur de l'image :
+                     * (imgHaut / nbPiecesY)/2 car le bord est de (imgHau / nbPiecesY)/4 et on veut la meme
+                     * chose a l'interieur.
+                     * Donc ces pixels sont copies sur le bord de l'image du dessus.
+                     * On peut ensuite mettre les pixels du dessous transparents.
+                     */
+                    pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].rouge
+                            = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].rouge;
+                    pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].vert
+                            = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].vert;
+                    pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].bleu
+                            = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].bleu;
+                    pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].alpha
+                            = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha;
+                    // On met le pixel transparent dans l'image de droite
+                    pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha = 0;
+                }
+                l += 2;
+            }
+        }
+        else
+        {
+            for(int i = 0; i < (imgLarg / nbPiecesX)/4; i++)
+            {
+                for (int j = 0; j < l; j++)
+                {
+                    /**
+                     * Meme chose que precedement, mais de bas en haut
+                     */
+                    pc2.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][i].rouge
+                            = pc1.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i].rouge;
+                    pc2.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][i].vert
+                            = pc1.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i].vert;
+                    pc2.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][i].bleu
+                            = pc1.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i].bleu;
+                    pc2.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][i].alpha
+                            = pc1.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i].alpha;
+                    // On met le pixel transparent dans l'image de droite
+                    pc1.image[( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j][pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i].alpha = 0;
+                }
+                l += 2;
+            }
+        }
+    }
+
+    public static void bordsHoriz(Piece pc1, Piece pc2) {
+        int l = 2; // Nombre de cases a remplir
+        if (rand(0, 1) == 0) { // Pour avoir aleatoirement les bords sortants ou entrants
+            for (int i = 0; i < (imgLarg / nbPiecesX) / 4; i++) {
+                for (int j = 0; j < l; j++) {
+                    /**
+                     * On copie les pixels de l'image de droite en triangle a partir de l'interieur de l'image :
+                     * (imgLarg / nbPiecesX)/2 car le bord est de (imgLarg / nbPiecesX)/4 et on veut la meme
+                     * chose a l'interieur.
+                     * Donc ces pixels sont copies sur le bord de l'image de gauche.
+                     * On peut ensuite mettre les pixels de droite transparents.
+                     */
+                    pc1.image[pc1.image.length - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].rouge
+                            = pc2.image[(imgLarg / nbPiecesX) / 2 - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].rouge;
+                    pc1.image[pc1.image.length - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].vert
+                            = pc2.image[(imgLarg / nbPiecesX) / 2 - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].vert;
+                    pc1.image[pc1.image.length - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].bleu
+                            = pc2.image[(imgLarg / nbPiecesX) / 2 - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].bleu;
+                    pc1.image[pc1.image.length - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].alpha
+                            = pc2.image[(imgLarg / nbPiecesX) / 2 - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].alpha;
+                    // On met le pixel transparent dans l'image de droite
+                    pc2.image[(imgLarg / nbPiecesX) / 2 - i - 1][((pc1.image[0].length / 2) + (l / 2) - 1) - j].alpha = 0;
+                }
+                l += 2;
+            }
+        }
+        else
+        {
+            for(int i = 0; i < (imgLarg / nbPiecesX)/4; i++)
+            {
+                for (int j = 0; j < l; j++)
+                {
+                    /**
+                     * Meme chose que precedement, mais de droite a gauche
+                     */
+                    pc2.image[i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].rouge
+                            = pc1.image[pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].rouge;
+                    pc2.image[i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].vert
+                            = pc1.image[pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].vert;
+                    pc2.image[i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].bleu
+                            = pc1.image[pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].bleu;
+                    pc2.image[i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].alpha
+                            = pc1.image[pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].alpha;
+                    // On met le pixel transparent dans l'image de droite
+                    pc1.image[pc1.image[0].length - (imgLarg / nbPiecesX)/2 + i][( (pc1.image[0].length / 2) + (l / 2) - 1 ) - j].alpha = 0;
+                }
+                l += 2;
+            }
+        }
     }
 
     /**
@@ -409,9 +553,9 @@ public class Puzzle
             for(int i = 0; i < nbPiecesX; i++)
             {
                 pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
-                pzl.pieces[i][j].pos.x = x2 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x);
+                pzl.pieces[i][j].pos.x = x2 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x) - (imgLarg / nbPiecesX)/4;
                 pzl.pieces[i][j].pos.y = positions[j*(nbPiecesX)+i] / nbPiecesX;
-                pzl.pieces[i][j].pos.y = y2 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y);
+                pzl.pieces[i][j].pos.y = y2 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y) - (imgHaut / nbPiecesY)/4;
             }
         }
     }
@@ -464,9 +608,10 @@ public class Puzzle
             i = 0;
             while(!est && i < nbPiecesX)
             {
-                est = (souris.pos.x >= pzl.pieces[i][j].pos.x) && (souris.pos.x <= (pzl.pieces[i][j].pos.x + imgLarg / nbPiecesX))
-                        && (souris.pos.y >= pzl.pieces[i][j].pos.y) && (souris.pos.y <= (pzl.pieces[i][j].pos.y
-                        + (imgHaut / nbPiecesY)));
+                est = (souris.pos.x >= pzl.pieces[i][j].pos.x + (imgLarg / nbPiecesX)/4)
+                        && (souris.pos.x <= (pzl.pieces[i][j].pos.x + imgLarg / nbPiecesX + (imgLarg / nbPiecesX)/4))
+                        && (souris.pos.y >= pzl.pieces[i][j].pos.y + (imgHaut / nbPiecesY)/4)
+                        && (souris.pos.y <= (pzl.pieces[i][j].pos.y + (imgHaut / nbPiecesY) + (imgHaut / nbPiecesY)/4));
                 // && !pzl.pieces[i][j].placee;
                 if(est) // Est sur une piece
                 {
@@ -638,17 +783,14 @@ public class Puzzle
     {
         return (int)(Math.random() * (max - min + 1)) + min;
     }
-    
-    
-    
-    
-    
-    
-     /**
-     * Boucle principale du jeu
-     * @param pzl  puzzle
+
+
+    /**
+     * Boucle principale de jeu
+     * @param pzl   Puzzle a jouer
+     * @return      Si on rejoue ou non
      */
-    public static void jouer(PuzzleJeu pzl)
+    public static boolean jouer(PuzzleJeu pzl)
     {
         boolean relancer = false; // Si on demande a changer de puzzle dans jouerCoup
 
@@ -659,31 +801,20 @@ public class Puzzle
             pzl.nbCoups++;
         }
 
-        if(relancer) // Si on veut un autre puzzle
-        {
-            pzl = new PuzzleJeu(); // On en declare un nouveau
-            initialiser(pzl, saisirImage()); // On l'initialise
-            // melanger(pzl); // On melange les pieces --> fait dans initialiser
-            jouer(pzl); // Et on rejoue :)
-        }
-        
         // Si l'image est reconstituee, on attend que l'utilisateur clique quelque part pour lancer une nouvelle partie
         pzl.temps = java.lang.System.currentTimeMillis() - pzl.temps;
         souris.clicDroit = false;
         souris.clicGauche = false;
-        while(estReconstitue(pzl))
-        {
+        while (!relancer) {
             afficher(pzl); // On continue a afficher
             attendClic(); // On attend le clic
-            if(souris.clicDroit || souris.clicGauche) // On attend le clic
+            if (souris.clicDroit || souris.clicGauche) // On attend le clic
             {
-                pzl = new PuzzleJeu(); // On en declare un nouveau
-                initialiser(pzl, saisirImage()); // On l'initialise
-                // melanger(pzl); // On melange les pieces --> fait dans initialiser
-                jouer(pzl); // On peut rejouer
+                relancer = true;
             }
-            EcranGraphique.wait(16);
+            EcranGraphique.wait(30);
         }
+        return relancer;
     }
 
     /**
@@ -731,8 +862,8 @@ public class Puzzle
                     if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] == 0)
                     {
                         // On met la piece dans sa case (celle sous le curseur) si elle est au dessus de la grille
-                        pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = c * (imgLarg / nbPiecesX) + x1;
-                        pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = l * (imgHaut / nbPiecesY) + y1;
+                        pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = c * (imgLarg / nbPiecesX) + x1 - (imgLarg / nbPiecesX)/4;
+                        pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = l * (imgHaut / nbPiecesY) + y1 - (imgHaut / nbPiecesY)/4;
                         
                         // On dit a la grille des placements qu'il y a une piece dans cette case
                         pzl.placements[c][l] = 2;
@@ -810,8 +941,8 @@ public class Puzzle
 
             // On fait suivre le curseur par la piece
             if (clk) {
-                pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = EcranGraphique.getMouseX() - (imgLarg / nbPiecesX)/2;
-                pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = EcranGraphique.getMouseY() - (imgHaut / nbPiecesY)/2;
+                pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = EcranGraphique.getMouseX() - (imgLarg / nbPiecesX)/2 - (imgLarg / nbPiecesX)/4;
+                pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = EcranGraphique.getMouseY() - (imgHaut / nbPiecesY)/2 - (imgHaut / nbPiecesY)/4;
             }
 
             // Mise a jour de l'etat des boutons (survol)
@@ -828,23 +959,79 @@ public class Puzzle
             if(!relancer) // Pour ne pas avoir de pb dans le nb de cases a afficher lorsqu'on change le nombre de pieces
                 afficher(pzl);
 
-            EcranGraphique.wait(16); // Pour avoir environ 60 images par secondes
+            EcranGraphique.wait(30);
         }
         return relancer;
     }
-   
-    
     
     
     
 //////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////    IMAGE   ////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////       
-    
-    
-    
-    
-    
+////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Type agrege representant un pixel d'une image.
+     * Il est compose de trois couleurs, rouge, vert et bleu qui sont des entiers pouvant varier
+     * de 0 a 255.
+     * Il possede egalement une composante alpha qui correspond a la transparence de chaque pixel :
+     * le pixel est transparent pour alpha a 0 et est opaque pour alpha a 255.
+     */
+    static class Pixel
+    {
+        /** Dose de rouge d'un pixel (de 0 a 255) **/
+        int rouge = 0;
+        /** Dose de vert d'un pixel (de 0 a 255) **/
+        int vert = 0;
+        /** Dose de bleu d'un pixel (de 0 a 255) **/
+        int bleu = 0;
+        /** Transparence d'un pixel de [0, 255] pour [transparent, opaque] **/
+        int alpha = 255;
+    }
+
+    public static void drawImage(int x, int y, Pixel[][] image)
+    {
+        /** Largeur de l'image **/
+        int larg = image.length;
+        /** Hauteur de l'image. On suppose que la largeur n'est pas nulle **/
+        int haut = image[0].length;
+
+        EcranGraphique.setAlphaBlendingMode(true);
+
+        for(int j = 0; j < haut; j++)
+        {
+            for(int i = 0; i < larg; i++)
+            {
+                EcranGraphique.setAlpha( (double)(image[i][j].alpha) / 255.0);
+                EcranGraphique.setColor(image[i][j].rouge, image[i][j].vert, image[i][j].bleu);
+                EcranGraphique.drawPixel(x + i, y + j);
+            }
+        }
+        EcranGraphique.setAlphaBlendingMode(false);
+    }
+
+    public static Pixel[][] conversion(int[][] image)
+    {
+        /**
+         * Nouveau tableau de pixel pour representer l'image, de la taille de celle a convertir.
+         * On suppose que l'image a convertir n'est pas vide
+         */
+        Pixel[][] img = new Pixel[image.length][image[0].length];
+
+        for(int j = 0; j < image[0].length; j++)
+        {
+            for (int i = 0; i < image.length; i++)
+            {
+                img[i][j] = new Pixel();
+                img[i][j].rouge = (image[i][j]      ) & 0xFF;
+                img[i][j].vert  = (image[i][j] >>  8) & 0xFF;
+                img[i][j].bleu  = (image[i][j] >> 16) & 0xFF;
+                img[i][j].alpha = 255;
+            }
+        }
+
+        return img;
+    }
     
      /**
      * Saisie d'une image : selection aleatoire de l'image parmi celles se trouvant dans /img/
@@ -883,26 +1070,36 @@ public class Puzzle
         pc.rotation = pc.rotation + 90;
         pc.rotation = pc.rotation % 360; // Pour que la rotation soit a zero apres 270
 
-        int[][] imgTrans; // image de transition
-        imgTrans = new int[imgLarg / nbPiecesX][imgHaut / nbPiecesY];
+        Pixel[][] imgTrans; // image de transition
+        imgTrans = new Pixel[pc.image.length][pc.image[0].length];
 
         // On copie l'ancienne image dans notre image de transition
-        for(int j = 0; j < imgHaut / nbPiecesY; j++)
+        for(int j = 0; j < pc.image[0].length; j++)
         {
-            for(int i = 0; i < imgLarg / nbPiecesX; i++)
+            for(int i = 0; i < pc.image.length; i++)
             {
-                imgTrans[i][j] = pc.image[i][j];
+                imgTrans[i][j] = new Pixel();
+                imgTrans[i][j].rouge = pc.image[i][j].rouge;
+                imgTrans[i][j].vert = pc.image[i][j].vert;
+                imgTrans[i][j].bleu = pc.image[i][j].bleu;
+                imgTrans[i][j].alpha = pc.image[i][j].alpha;
             }
         }
 
         // On copie l'image de transition apres l'avoir fait pivotee de 90 degres
-        for(int j = 0; j < imgHaut / nbPiecesY; j++)
+        for(int j = 0; j < pc.image[0].length; j++)
         {
-            for(int i = 0; i < imgLarg / nbPiecesX; i++)
+            for(int i = 0; i < pc.image.length; i++)
             {
-                pc.image[(imgHaut / nbPiecesY) - j - 1][i] = imgTrans[i][j];
+                // pc.image[(pc.image.length) - j - 1][i] = new Pixel();
+                pc.image[(pc.image.length) - j - 1][i].rouge = imgTrans[i][j].rouge;
+                pc.image[(pc.image.length) - j - 1][i].vert = imgTrans[i][j].vert;
+                pc.image[(pc.image.length) - j - 1][i].bleu = imgTrans[i][j].bleu;
+                pc.image[(pc.image.length) - j - 1][i].alpha = imgTrans[i][j].alpha;
+                imgTrans[i][j] = null;
             }
         }
+        imgTrans = null;
     }
     
     
@@ -927,12 +1124,18 @@ public class Puzzle
         EcranGraphique.clear();
 
         // Declaration de la variable contenant l'essentiel du jeu
-        PuzzleJeu pzl = new PuzzleJeu();
-        // Initialisation de cette variable
-        initialiser(pzl, saisirImage());
-        // Melange du puzzle
-        melanger(pzl);
-        // On peut jouer !
-        jouer(pzl);
+        PuzzleJeu pzl = null;
+
+
+        do
+        {
+            pzl = new PuzzleJeu();
+            // Initialisation du puzzle
+            initialiser(pzl, saisirImage());
+            // Melange du puzzle
+            melanger(pzl);
+            // On peut jouer !
+        } while(jouer(pzl));
+        EcranGraphique.exit();
     }
 }
