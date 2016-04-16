@@ -980,13 +980,13 @@ public class Puzzle
     static class Pixel
     {
         /** Dose de rouge d'un pixel (de 0 a 255) **/
-        int rouge = 0;
+        short rouge = 0;
         /** Dose de vert d'un pixel (de 0 a 255) **/
-        int vert = 0;
+        short vert = 0;
         /** Dose de bleu d'un pixel (de 0 a 255) **/
-        int bleu = 0;
+        short bleu = 0;
         /** Transparence d'un pixel de [0, 255] pour [transparent, opaque] **/
-        int alpha = 255;
+        short alpha = 255;
     }
 
     public static void drawImage(int x, int y, Pixel[][] image)
@@ -1023,9 +1023,9 @@ public class Puzzle
             for (int i = 0; i < image.length; i++)
             {
                 img[i][j] = new Pixel();
-                img[i][j].rouge = (image[i][j]      ) & 0xFF;
-                img[i][j].vert  = (image[i][j] >>  8) & 0xFF;
-                img[i][j].bleu  = (image[i][j] >> 16) & 0xFF;
+                img[i][j].rouge = (short)((image[i][j]      ) & 0xFF);
+                img[i][j].vert  = (short)((image[i][j] >>  8) & 0xFF);
+                img[i][j].bleu  = (short)((image[i][j] >> 16) & 0xFF);
                 img[i][j].alpha = 255;
             }
         }
