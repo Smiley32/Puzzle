@@ -399,7 +399,8 @@ public class Puzzle
         }
     }
 
-    public static void bordsVertic(Piece pc1, Piece pc2) {
+    public static void bordsVertic(Piece pc1, Piece pc2)
+    {
         int l = 2; // Nombre de cases a remplir
         if (rand(0, 1) == 0) { // Pour avoir aleatoirement les bords sortants ou entrants
             for (int i = 0; i < (imgHaut / nbPiecesY) / 4; i++) {
@@ -450,7 +451,8 @@ public class Puzzle
         }
     }
 
-    public static void bordsHoriz(Piece pc1, Piece pc2) {
+    public static void bordsHoriz(Piece pc1, Piece pc2)
+    {
         int l = 2; // Nombre de cases a remplir
         if (rand(0, 1) == 0) { // Pour avoir aleatoirement les bords sortants ou entrants
             for (int i = 0; i < (imgLarg / nbPiecesX) / 4; i++) {
