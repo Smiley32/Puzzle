@@ -232,6 +232,7 @@ public class Puzzle
         drawBouton(pzl.mn.taille3x4);
         drawBouton(pzl.mn.taille6x8);
         drawBouton(pzl.mn.activRotation);
+        drawBouton(pzl.mn.quitter);
 
         // Mise a jour de l'affichage
         EcranGraphique.flush();
@@ -265,7 +266,8 @@ public class Puzzle
         pzl.placements = new int[nbPiecesX][nbPiecesY];
 
         // Declaration et initialisation des boutons du Menu
-        
+
+
         // Bouton relancer un puzzle
         pzl.mn.relanc = new Bouton();
         pzl.mn.relanc.label = "Autre puzzle";
@@ -297,7 +299,16 @@ public class Puzzle
         pzl.mn.activRotation.y = pzl.mn.taille6x8.y + 35;
         pzl.mn.activRotation.larg = 10 * pzl.mn.activRotation.label.length();
         pzl.mn.activRotation.haut = 25;
-        
+
+        //Bouton quitter
+        pzl.mn.quitter = new Bouton();
+        pzl.mn.quitter.label = "Quitter";
+        pzl.mn.quitter.x = pzl.mn.relanc.x;
+        pzl.mn.quitter.y = pzl.mn.activRotation.y + 35;
+        pzl.mn.quitter.larg = 10 * pzl.mn.quitter.label.length();
+        pzl.mn.quitter.haut = 25;
+
+
         // Mise a zero de la grille des placements : elle est vide au depart
         for(int j = 0; j < nbPiecesY; j++)
         {
@@ -717,6 +728,8 @@ public class Puzzle
         Bouton taille6x8;
         /** Bouton pour activer la rotation des pieces **/
         Bouton activRotation;
+        /**Bouton pour quitter l'application **/
+        Bouton quitter;
     }
     
     
@@ -815,6 +828,23 @@ public class Puzzle
             EcranGraphique.wait(30);
         }
         return relancer;
+
+
+
+
+        /**int tempsResolution(void)
+            {
+            int s = pzl.temps/1000;
+
+            int annee   = s / 60 / 60 / 24 / 365;
+            int jour    = s / 60 / 60 / 24 % 365;
+            int heure   = s / 60 / 60 % 24;
+            int minute  = s / 60 % 60;
+            int seconde = s % 60;
+
+            E.ln("\n%d an(s), %d jour(s), %d heure(s), %d minute(s), %d seconde(s)\n\n", annee, jour, heure, minute, seconde);
+            return 0;
+        }**/
     }
 
     /**
@@ -929,6 +959,15 @@ public class Puzzle
                 }
                 else
                     pzl.mn.taille6x8.appui = false;
+
+                if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
+                {
+                    pzl.mn.quitter.appui = true;
+                    System.exit(0);
+                }
+                else
+                    pzl.mn.quitter.appui = false;
+
             }
             else if(unClic && souris.clicDroit) // Si c'est un clic droit
             {
@@ -954,7 +993,8 @@ public class Puzzle
             pzl.mn.taille6x8.survol = estSurBouton(pzl.mn.taille6x8);
             // Bouton rotation
             pzl.mn.activRotation.survol = estSurBouton(pzl.mn.activRotation);
-
+            // Bouton quitter
+            pzl.mn.quitter.survol = estSurBouton(pzl.mn.quitter);
             // On affiche le tout
             if(!relancer) // Pour ne pas avoir de pb dans le nb de cases a afficher lorsqu'on change le nombre de pieces
                 afficher(pzl);
@@ -1101,18 +1141,16 @@ public class Puzzle
         }
         imgTrans = null;
     }
-    
-    
-    
+
+
 ///////////////////////////////////////////////////////////////////////////////////    
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////    FONCTION PRINCIPALE   ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////         
 ///////////////////////////////////////////////////////////////////////////////    
-    
-    
-    
-    
+
+
+
     
     public static void main(String[] args)
     {
