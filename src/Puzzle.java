@@ -1082,7 +1082,7 @@ public class Puzzle
     public static int[][] saisirImage()
     {
         int[][] img;
-        img = EcranGraphique.loadPNGFile("img/" + rand(1, 31) + ".png"); // Selection de l'image entre les 31 dans /img
+        img = EcranGraphique.loadPNGFile("img/" + rand(1, 39) + ".png"); // Selection de l'image entre les 31 dans /img
 
         // Lignes noires symbolisant les bords
         for(int j = 0; j < 5; j++)
