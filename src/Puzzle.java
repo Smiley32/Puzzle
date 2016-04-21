@@ -170,10 +170,12 @@ public class Puzzle
         /** Grille du placement des cases. 0 : aucune case; 1 : Contient une case bien placee; 2 : contient une case mal placee **/
         int[][] placements;
         // int tx, ty;
-    }    
-    
-    
-        /**
+    }
+
+
+
+
+    /**
      * Affichage du puzzle
      * @param pzl  puzzle a afficher
      */
@@ -221,8 +223,8 @@ public class Puzzle
         // A la fin d'une partie, on affiche un texte
         if(estReconstitue(pzl))
         {
-            EcranGraphique.drawText(x2, 50, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
-                    + pzl.nbCoups + " coups en " + pzl.temps/1000 + " secondes");
+            EcranGraphique.drawText(x2, 80, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
+                    + pzl.nbCoups + " coups en " + tempsResolution(pzl.temps));
             EcranGraphique.drawText(x2, 70, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
         }
@@ -832,22 +834,29 @@ public class Puzzle
         return relancer;
 
 
-
-
-        /**int tempsResolution(void)
-            {
-            int s = pzl.temps/1000;
-
-            int annee   = s / 60 / 60 / 24 / 365;
-            int jour    = s / 60 / 60 / 24 % 365;
-            int heure   = s / 60 / 60 % 24;
-            int minute  = s / 60 % 60;
-            int seconde = s % 60;
-
-            E.ln("\n%d an(s), %d jour(s), %d heure(s), %d minute(s), %d seconde(s)\n\n", annee, jour, heure, minute, seconde);
-            return 0;
-        }**/
     }
+
+        public static String tempsResolution(long nbSecondes)
+        {
+            String msgFin;
+            long heure   = nbSecondes /1000 / 60 / 60 % 24;
+            long minute  = nbSecondes /1000 / 60 % 24 % 60;
+            long seconde = nbSecondes /1000 %  24 % 60;
+
+            if (heure <=0  && minute <=0  )
+            {
+                msgFin = " vous avez mis "+ seconde +"seconde(s)"+ "a resoudre le puzzle.";
+            }
+            else
+            {
+                msgFin = " vous avez mis" + heure +"heure(s) et " + minute +"minute(s) et "  + seconde +"seconde(s)"+ "a resoudre le puzzle.";
+            }
+
+
+            return msgFin;
+        }
+
+
 
     /**
      * Attend que l'utilisateur joue un coup : l'utilisateur prend une piece et la repose
