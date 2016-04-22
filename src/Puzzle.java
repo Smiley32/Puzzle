@@ -195,15 +195,15 @@ public class Puzzle
             EcranGraphique.drawLine(x1, y1 + i*(imgHaut / nbPiecesY), x1 + imgLarg, y1 + i*(imgHaut / nbPiecesY));
         }
 
-        // Affichage des instructions de début
-
-        EcranGraphique.drawText(900, 70, EcranGraphique.COLABA8x13, "Attention si tu actives la rotation");
+        // Affichage des instructions de jeu
+        EcranGraphique.drawText(900, 70, EcranGraphique.COLABA8x13, "Attention, la rotation est activee par defaut");
         EcranGraphique.drawText(900, 90, EcranGraphique.COLABA8x13,"Utilise clic droit pour faire tourner les pieces ! ");
         EcranGraphique.drawText(900, 110, EcranGraphique.COLABA8x13, "Pour quitter utilise le bouton quitter");
         EcranGraphique.setColor(0, 216, 232);
         EcranGraphique.drawText(900, 150, EcranGraphique.COLABA8x13, "(\\__/)   ENJOY");
         EcranGraphique.drawText(900, 165, EcranGraphique.COLABA8x13, "(='.'=)  YOUR");
         EcranGraphique.drawText(900, 180, EcranGraphique.COLABA8x13, "(\")_(\")  GAME!");
+
         // Affichage des pieces
         for(int j = 0; j < nbPiecesY; j++)
         {
@@ -233,9 +233,9 @@ public class Puzzle
         if(estReconstitue(pzl))
         {
             EcranGraphique.setColor(0, 80, 252);
-            EcranGraphique.drawText(900, 220, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
+            EcranGraphique.drawText(500, 220, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
                     + pzl.nbCoups + " coups " + tempsResolution(pzl.temps/1000));
-            EcranGraphique.drawText(900, 240, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
+            EcranGraphique.drawText(500, 240, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
         }
 
@@ -250,31 +250,27 @@ public class Puzzle
         if(estSurBouton(pzl.mn.relanc)) // Bouton changement de puzzle
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu clic cela changera de puzzle ! ");
+            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle ! ");
         }
-
         if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu clic cela changera de puzzle et mettra une grille 3 X 4 ");
+            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 3 X 4 ");
         }
-
         if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu clic cela changera de puzzle et mettra une grille 6 X 8 ");
+            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 6 X 8 ");
         }
-
-
         if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu clic cela activera/desactivera la rotation des pieces");
+            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela activera/desactivera la rotation des pieces");
         }
         if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu clic tu quitteras ce super PUZZLE ! ! !");
+            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu clic tu quitteras ce superbe PUZZLE ! ! !");
         }
 
         // Mise a jour de l'affichage
@@ -877,27 +873,33 @@ public class Puzzle
 
     }
 
-        public static String tempsResolution(long nbSecondes)
-        {
-            String msgFin ="";
-            long heure   = nbSecondes / 60 / 60 % 24;
-            long minute  = nbSecondes  / 60  % 60;
-            long seconde = nbSecondes  % 60;
+    /**
+     * Transforme en chaine de caracteres le nombre de secondes mises par le joueur pour resoudre un puzzle
+     * @param nbSecondes   nombre de secondes passees a resoudre le puzzle
+     * @return             chaine de caracteres contenant le nombre d'heures (eventuel), de minutes (eventuel) et de secondes
+     */
+    public static String tempsResolution(long nbSecondes)
+    {
+        String msgFin;
+        long heure   = nbSecondes / 60 / 60 % 24;
+        long minute  = nbSecondes  / 60  % 60;
+        long seconde = nbSecondes  % 60;
 
-            if (heure <=0 && minute <=0)
-            {
-                msgFin = "et tu as mis " + seconde + " seconde(s).";
-            }
-            if (minute >= 1 && heure <= 0  )
-            {
-                msgFin = "et tu as mis " + minute + " minute(s) " + seconde + " seconde(s.";
-            }
-            if ( heure >= 1 && minute >=1 )
-            {
-                msgFin = "et tu as mis " + heure +" heure(s) et " + minute +" minute(s) et "  + seconde +" seconde(s).";
-            }
-            return msgFin;
+        msgFin = "et tu as mis ";
+        if (heure <=0 && minute <=0)
+        {
+            msgFin = msgFin + seconde + " seconde(s).";
         }
+        if (minute >= 1 && heure <= 0  )
+        {
+            msgFin = msgFin + minute + " minute(s) " + seconde + " seconde(s).";
+        }
+        if ( heure >= 1 && minute >=1 )
+        {
+            msgFin = msgFin + heure +" heure(s) et " + minute +" minute(s) et "  + seconde +" seconde(s).";
+        }
+        return msgFin;
+    }
 
 
 
