@@ -223,8 +223,8 @@ public class Puzzle
         // A la fin d'une partie, on affiche un texte
         if(estReconstitue(pzl))
         {
-            EcranGraphique.drawText(x2, 80, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
-                    + pzl.nbCoups + " coups en " + tempsResolution(pzl.temps));
+            EcranGraphique.drawText(x2, 90, EcranGraphique.COLABA8x13, "Tu as reussi le puzzle en "
+                    + pzl.nbCoups + " coups " + tempsResolution(pzl.temps/1000));
             EcranGraphique.drawText(x2, 70, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
         }
@@ -838,21 +838,23 @@ public class Puzzle
 
         public static String tempsResolution(long nbSecondes)
         {
-            String msgFin;
-            long heure   = nbSecondes /1000 / 60 / 60 % 24;
-            long minute  = nbSecondes /1000 / 60 % 24 % 60;
-            long seconde = nbSecondes /1000 %  24 % 60;
+            String msgFin ="";
+            long heure   = nbSecondes / 60 / 60 % 24;
+            long minute  = nbSecondes  / 60 % 24 % 60;
+            long seconde = nbSecondes  %  24 % 60;
 
-            if (heure <=0  && minute <=0  )
+            if (heure <=0 && minute <=0)
             {
-                msgFin = " vous avez mis "+ seconde +"seconde(s)"+ "a resoudre le puzzle.";
+                msgFin = "et tu as mis " + seconde + " seconde(s).";
             }
-            else
+            if (minute >= 1 && heure <= 0  )
             {
-                msgFin = " vous avez mis" + heure +"heure(s) et " + minute +"minute(s) et "  + seconde +"seconde(s)"+ "a resoudre le puzzle.";
+                msgFin = "et tu as mis " + minute + " minute(s) " + seconde + " seconde(s.";
             }
-
-
+            if ( heure >= 1 && minute >=1 )
+            {
+                msgFin = "et tu as mis " + heure +" heure(s) et " + minute +" minute(s) et "  + seconde +" seconde(s).";
+            }
             return msgFin;
         }
 
@@ -967,6 +969,8 @@ public class Puzzle
                     pzl.mn.activRotation.appui = true;
                     rotation = !rotation; // On inverse rotation
                     relancer = true; // On change aussi de puzzle
+                    //EcranGraphique.drawText(x2, 70, EcranGraphique.COLABA8x13, "Tu as activer la rotation ! Utilise clic droit pour faire tourner les pièces ! ");
+
                 }
                 else
                     pzl.mn.taille6x8.appui = false;
@@ -1091,7 +1095,7 @@ public class Puzzle
     public static int[][] saisirImage()
     {
         int[][] img;
-        img = EcranGraphique.loadPNGFile("img/" + rand(1, 39) + ".png"); // Selection de l'image entre les 31 dans /img
+        img = EcranGraphique.loadPNGFile("img/" + rand(1,31) + ".png"); // Selection de l'image entre les 31 dans /img
 
         // Lignes noires symbolisant les bords
         for(int j = 0; j < 5; j++)
@@ -1166,7 +1170,7 @@ public class Puzzle
     public static void main(String[] args)
     {
         // Initialisation de la fenetre
-        EcranGraphique.init(0, 0, 1280, 720, 1280, 720, "Puzzle"); // Init de la fenetre
+        EcranGraphique.init(0, 0, 1600, 770, 1600, 770, "Puzzle"); // Init de la fenetre
         // Definition de la couleur avec laquelle on efface l'ecran
         EcranGraphique.setClearColor(255, 255, 255);
         // Premier effacage
