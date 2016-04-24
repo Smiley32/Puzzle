@@ -250,27 +250,27 @@ public class Puzzle
         if(estSurBouton(pzl.mn.relanc)) // Bouton changement de puzzle
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle ! ");
+            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle ! ");
         }
         if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 3 X 4 ");
+            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle et mettra une grille 3 X 4 ");
         }
         if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 6 X 8 ");
+            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle et mettra une grille 6 X 8 ");
         }
         if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela activera/desactivera la rotation des pieces");
+            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela activera/desactivera la rotation des pieces");
         }
         if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu clic tu quitteras ce superbe PUZZLE ! ! !");
+            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu cliques tu quitteras ce superbe PUZZLE ! ! !");
         }
 
         // Mise a jour de l'affichage
