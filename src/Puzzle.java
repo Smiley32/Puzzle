@@ -38,15 +38,6 @@ public class Puzzle
      * Position de la grille en Y
      */
     public static int y1 = 10;
-    /**
-     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en X
-     */
-    public static int x2 = x1 + imgLarg + 100;
-    /**
-     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en Y
-     */
-    public static int y2 = y1;
-    
     
     
     
@@ -237,6 +228,9 @@ public class Puzzle
                     + pzl.nbCoups + " coups " + tempsResolution(pzl.temps/1000));
             EcranGraphique.drawText(500, 240, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
+            EcranGraphique.drawText(500, 260, EcranGraphique.COLABA8x13, "(\\__/)    BRAVO");
+            EcranGraphique.drawText(500, 275, EcranGraphique.COLABA8x13, "(='.'=)   BIEN");
+            EcranGraphique.drawText(500, 290, EcranGraphique.COLABA8x13, "(\")_(\")   JOUE !");
         }
 
         // Affichage d'un menu
@@ -250,27 +244,27 @@ public class Puzzle
         if(estSurBouton(pzl.mn.relanc)) // Bouton changement de puzzle
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle ! ");
+            EcranGraphique.drawText(x1 +150, y1 + 500 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle ! ");
         }
         if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 3 X 4 ");
+            EcranGraphique.drawText(x1 +150, y1 + 535 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle et mettra une grille 3 X 4 ");
         }
         if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela changera de puzzle et mettra une grille 6 X 8 ");
+            EcranGraphique.drawText(x1 +150, y1 + 570 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela changera de puzzle et mettra une grille 6 X 8 ");
         }
         if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu clique cela activera/desactivera la rotation des pieces");
+            EcranGraphique.drawText(x1 +210 , y1 + 605 + 20, EcranGraphique.COLABA8x13, "Si tu cliques cela activera/desactivera la rotation des pieces");
         }
         if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
         {
             EcranGraphique.setColor(255, 0, 0);
-            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu clic tu quitteras ce superbe PUZZLE ! ! !");
+            EcranGraphique.drawText(x1 +150 , y1 + 640 + 20, EcranGraphique.COLABA8x13, "ATTENTION !!! Si tu cliques tu quitteras ce superbe PUZZLE ! ! !");
         }
 
         // Mise a jour de l'affichage
@@ -605,9 +599,9 @@ public class Puzzle
             for(int i = 0; i < nbPiecesX; i++)
             {
                 pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
-                pzl.pieces[i][j].pos.x = x2 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x) - (imgLarg / nbPiecesX)/4;
+                pzl.pieces[i][j].pos.x = x1 + imgLarg + 100 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x) - (imgLarg / nbPiecesX)/4;
                 pzl.pieces[i][j].pos.y = positions[j*(nbPiecesX)+i] / nbPiecesX;
-                pzl.pieces[i][j].pos.y = y2 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y) - (imgHaut / nbPiecesY)/4;
+                pzl.pieces[i][j].pos.y = y1 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y) - (imgHaut / nbPiecesY)/4;
             }
         }
     }
@@ -724,12 +718,12 @@ public class Puzzle
     public static void drawBouton(Bouton bt)
     {
         // Definition de la couleur du bouton
-        if(bt.survol && !bt.appui) // Si le bouton est survole mais pas appuye
-            EcranGraphique.setColor(100, 0, 0);
-        else if(bt.appui) // Si le bouton est appuye
-            EcranGraphique.setColor(255, 0, 0);
+        if(bt.appui) // Si le bouton est appuye
+            EcranGraphique.setColor(210, 0, 0);
+        else if(bt.survol) // Si le bouton est survole mais pas appuye
+            EcranGraphique.setColor(119, 0, 254);
         else // Sinon
-            EcranGraphique.setColor(0, 0, 0);
+            EcranGraphique.setColor(6, 0, 179);
 
         EcranGraphique.fillRect(bt.x, bt.y, bt.larg, bt.haut); // rectangle symbolisant le bouton
         EcranGraphique.setColor(255, 255, 255); // Couleur du texte
@@ -851,6 +845,12 @@ public class Puzzle
         // On joue un nouveau coup tant que le puzzle n'est pas reconstitue et qu'on n'a pas demande a changer de puzzle
         while(!estReconstitue(pzl) && !relancer)
         {
+            if(nbPiecesX == 3 && nbPiecesY == 4)
+                pzl.mn.taille3x4.appui = true;
+            if(nbPiecesX == 6 && nbPiecesY == 8)
+                pzl.mn.taille6x8.appui = true;
+            if(rotation)
+                pzl.mn.activRotation.appui = true;
             relancer = jouerCoup(pzl);
             pzl.nbCoups++;
         }
@@ -881,7 +881,7 @@ public class Puzzle
     public static String tempsResolution(long nbSecondes)
     {
         String msgFin;
-        long heure   = nbSecondes / 60 / 60 % 24;
+        long heure   = nbSecondes / 60 / 60;
         long minute  = nbSecondes  / 60  % 60;
         long seconde = nbSecondes  % 60;
 
@@ -983,10 +983,7 @@ public class Puzzle
                 {
                     pzl.mn.relanc.appui = true;
                     relancer = true;
-
                 }
-                else
-                    pzl.mn.relanc.appui = false;
 
                 if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
                 {
@@ -995,8 +992,6 @@ public class Puzzle
                     nbPiecesY = 4;
                     relancer = true; // On change aussi de puzzle
                 }
-                else
-                    pzl.mn.taille3x4.appui = false;
 
                 if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
                 {
@@ -1005,27 +1000,19 @@ public class Puzzle
                     nbPiecesY = 8;
                     relancer = true; // On change aussi de puzzle
                 }
-                else
-                    pzl.mn.taille6x8.appui = false;
                 
                 if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
                 {
                     pzl.mn.activRotation.appui = true;
                     rotation = !rotation; // On inverse rotation
                     relancer = true; // On change aussi de puzzle
-
-
                 }
-                else
-                    pzl.mn.taille6x8.appui = false;
 
                 if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
                 {
                     pzl.mn.quitter.appui = true;
-                    System.exit(0);
+                    EcranGraphique.exit();
                 }
-                else
-                    pzl.mn.quitter.appui = false;
 
             }
             else if(unClic && souris.clicDroit) // Si c'est un clic droit
