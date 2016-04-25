@@ -41,26 +41,9 @@ public class Puzzle
     
     
     
-    
-    
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////      SOURIS       /////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    /**
-     * Pour avoir un clic unique : on utilise un booleen qui se souvient si un clic a ete fait ou non.
-     * Ce booleen prend donc la valeur true lors d'un clic (qu'importe la longueur du clic)
-     * et prend la valeur false lors du relachement de ce clic grace a la fonction attendClic()
-     */
-    // public static boolean clicUnique = true;
-
-    /**
-     * Position du clic dans la fenetre. Cette position est mise a jour avec la fonction attendClic()
-     */
-    // public static Position2D clic = new Position2D();
     
     
     /**
@@ -271,8 +254,7 @@ public class Puzzle
         EcranGraphique.flush();
     }
     
-    
-        /**
+    /**
      * Initialisation du puzzle
      * @param pzl   puzzle a initialiser
      * @param image image a malanger
@@ -417,6 +399,11 @@ public class Puzzle
             melangeRotations(pzl);
     }
 
+    /**
+     * Creation des bordures avec des dents interieures ou exterieures
+     *
+     * @param pzl   Puzzle pour lequel on veut creer ces dents
+     */
     public static void bords(PuzzleJeu pzl)
     {
         for(int j = 0; j < nbPiecesY; j++)
@@ -432,6 +419,13 @@ public class Puzzle
         }
     }
 
+    /**
+     * Cette fonction modifie les images de deux pieces pour ajouter une dent sortante ou entrante sur un bord commun aux deux pieces
+     * Les deux pieces doivent etre cotes a cotes verticalement (l'une en dessous de l'autre)
+     *
+     * @param pc1  Piece du dessus
+     * @param pc2  Piece du dessous
+     */
     public static void bordsVertic(Piece pc1, Piece pc2)
     {
         int l = 2; // Nombre de cases a remplir
@@ -453,7 +447,7 @@ public class Puzzle
                             = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].bleu;
                     pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].alpha
                             = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha;
-                    // On met le pixel transparent dans l'image de droite
+                    
                     pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha = 0;
                 }
                 l += 2;
@@ -484,6 +478,13 @@ public class Puzzle
         }
     }
 
+    /**
+     * Cette fonction modifie les images de deux pieces pour ajouter une dent sortante ou entrante sur un bord commun aux deux pieces
+     * Les deux pieces doivent etre cotes a cotes horizontalement.
+     *
+     * @param pc1  Piece de gauche
+     * @param pc2  Piece de droite
+     */
     public static void bordsHoriz(Piece pc1, Piece pc2)
     {
         int l = 2; // Nombre de cases a remplir
@@ -628,15 +629,7 @@ public class Puzzle
         int y;
     }
 
-    /**
-     * Souris qui est utilisee tout au long du jeu
-     */
 
-    /**
-     * Fonction principale avec les premieres initialisations
-     * @param args  tableau de chaines de caracteres qui sont les arguments envoyes a l'application
-     */
-    
      /**
      * Retourne si le curseur est sur une piece ou non
      * @param pzl    Le puzzle a tester
@@ -1075,6 +1068,13 @@ public class Puzzle
         short alpha = 255;
     }
 
+    /**
+     * Cette fonction affiche une image a l'ecran a l'aide de EcranGraphique, tout en gerant la transparence de l'image
+     *
+     * @param x      Position en x de l'image a dessiner
+     * @param y      Position en y de l'image a dessiner
+     * @param image  Image a dessiner (matrice de Pixel)
+     */
     public static void drawImage(int x, int y, Pixel[][] image)
     {
         /** Largeur de l'image **/
@@ -1096,6 +1096,13 @@ public class Puzzle
         EcranGraphique.setAlphaBlendingMode(false);
     }
 
+    /**
+     * Cette fonction convertit une matrice d'entiers correspondant a une image sans composante alpha,
+     * en une matrice de Pixel, donc avec une composante alpha permettant de gerer la transparence.
+     *
+     * @param image  Matrice d'entiers
+     * @return       Une matrice de Pixel (corrspond donc a une image)
+     */
     public static Pixel[][] conversion(int[][] image)
     {
         /**
@@ -1150,6 +1157,10 @@ public class Puzzle
         return img;
     }
    
+    /**
+     * Cette fonction tourne une piece de 90 degres en mettant a jour l'image et la rotation de la piece passee en parametre.
+     * @param pc   Piece qu'on veut faire tourner de 90°
+     */
     public static void pivoterImage(Piece pc)
     {
         // On indique la nouvelle rotation de la piece
@@ -1197,7 +1208,10 @@ public class Puzzle
 
 
 
-    
+    /**
+     * Cette fonction initialise l'affichage et permet de rejouer si voulu.
+     * @param args   Tableau des chaines de caracteres qui sont les arguments envoyes au programme
+     */
     public static void main(String[] args)
     {
         // Initialisation de la fenetre
