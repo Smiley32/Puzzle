@@ -2,14 +2,56 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[french]{babel}
+\usepackage[english, french]{babel}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{mathrsfs}
+
+\usepackage{hyperref}
+\usepackage{scrextend}
+\usepackage{xspace}
+
+\usepackage{graphicx}
+
+\usepackage{color}
+\usepackage{listings}
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.95,0.95,0.95}
+\lstset{
+	backgroundcolor=\color{lbcolor},
+	tabsize=4,
+	rulecolor=,
+	language=Java,
+	basicstyle=\scriptsize\ttfamily,
+	upquote=false,
+	aboveskip={.5\baselineskip},
+	columns=fixed,
+	showstringspaces=false,
+	extendedchars=true,
+	showspaces=false,
+	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	frame=single,
+	showtabs=false,
+	identifierstyle=\ttfamily,
+	keywordstyle=\bfseries\color[rgb]{0,0,1},
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+\newcommand{\variable}[1]{\noindent \texttt{#1}}
+
+%////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////PAGE DE GARDE////////////////////////////////
+%//////////////////////////////////////////////////////////////////////////////
 \title{Algo-Prog\\Sujet \no2 : Puzzle}
 \author{Jeannin Émile, Mottet Théo}
 
 \begin{document}
-\maketitle
 
+\maketitle
+\newpage
 \section{Mode d'emploi}
 
 Le but du jeu est de reconstituer l'image dans la grille se trouvant à gauche de l'écran. Pour cela, le joueur peut cliquer sur une pièce, ce qui aura pour conséquence de voir la pièce suivre le curseur. Il faudra recliquer pour déposer la pièce. Si le curseur se trouve au dessus d'une des cases de la grille, l'image tenue sera déposée correctement dans la case (cela compte comme un coup).
@@ -35,7 +77,7 @@ Problèmes (à mettre dans l'ordre):
 	\item
 		Déplacement des pièces (Comment la pièce suit le curseur et est devant les autres, au premier clic, on tient l'image, au second on la lache);
 	\item
-		Rotation des pièces (Comment se passe la rotation : formule ; au clic droit, on lache l'image si on la tenait et on la fait tourner de 90°);
+		Rotation des pièces (Comment se passe la rotation : formule ; au clic droit, on lache l'image si on la tenait et on la fait tourner de 90$^\circ$);
 	 \item
 		Forme des pièces (Comment on fait les pics sur chaque côtés des images --> les pics sont complémentaires entre les images ; schéma pour comprendre);
 	\item
@@ -51,5 +93,63 @@ Problèmes (à mettre dans l'ordre):
 	\item
 		Nombre de coups et temps (Les coups sont comptés et le temps aussi).
 \end{itemize}
+
+%////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////PREMIER CHAPITRE EMILE////////////////////
+%//////////////////////////////////////////////////////////////////////////////
+
+\subsection{Modification des pièces}
+\subsubsection{Rotation des pièces}
+\subsubsection{Formes des pièces}
+\subsubsection{Bordures des pièces}
+\subsubsection{Découpage de l'image}
+
+%////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////DEUXIEME CHAPITRE THEO //////////////////
+%//////////////////////////////////////////////////////////////////////////////
+
+\subsection{Ergonomie}
+\subsubsection{Placement des pièces}
+
+Pour placer les pièces nous avons procéder en différentes étapes. Dans un premier temps nous avons utilisé 4 booléens : 
+\begin{lstlisting}
+// Si il y a eu un clic (donc si on a une piece en main)
+boolean pieceTenue = false;
+// Si le tour est fini
+boolean finDuCoup = false;
+// Si on veut changer de puzzle
+boolean relancer = false;
+// Passe a true si il y a un clic (n'importe lequel)
+ boolean unClic;
+\end{lstlisting}
+Ainsi, nous pouvons vérifier quand le clic de la souris est utilisé. 
+Pour ce faire, on met à jour l'état de la souris à chaque tour de boucle. On regarde si il s'agit d'un clic gauche et on vérifie que la pièce est bien en main grâce au booléen \variable{pieceTenue}.
+
+\subsubsection{Boutons}
+\subsubsection{Gestion des clics}
+
+%///////////////////////////////////////////////////////////////////////////////
+%///////////////////////////TROISIEME CHAPITRE THEO/////////////////
+%//////////////////////////////////////////////////////////////////////////////
+
+\subsection{Gameplay}
+\subsubsection{Nombres de coups et temps}
+\subsubsection{Nouvelle partie}
+\subsubsection{Condition de fin}
+
+%/////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////QUATRIEME CHAPITRE EMILE/////////////////
+%//////////////////////////////////////////////////////////////////////////////
+
+\subsection{Affichage et déplacements}
+\subsubsection{Déplacement des pièces}
+\subsubsection{Affichage}
+
+%/////////////////////////////////////////////////////////////////////////////////
+%///////////////////////////INDEX/////////////////////////////////////////////
+%//////////////////////////////////////////////////////////////////////////////
+
+\newpage
+\tableofcontents
 
 \end{document}
