@@ -38,38 +38,12 @@ public class Puzzle
      * Position de la grille en Y
      */
     public static int y1 = 10;
-    /**
-     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en X
-     */
-    public static int x2 = x1 + imgLarg + 100;
-    /**
-     * Position du debut d'afichage des pieces au debut d'un nouveau jeu en Y
-     */
-    public static int y2 = y1;
-    
-    
-    
     
     
     
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////      SOURIS       /////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-    /**
-     * Pour avoir un clic unique : on utilise un booleen qui se souvient si un clic a ete fait ou non.
-     * Ce booleen prend donc la valeur true lors d'un clic (qu'importe la longueur du clic)
-     * et prend la valeur false lors du relachement de ce clic grace a la fonction attendClic()
-     */
-    // public static boolean clicUnique = true;
-
-    /**
-     * Position du clic dans la fenetre. Cette position est mise a jour avec la fonction attendClic()
-     */
-    // public static Position2D clic = new Position2D();
     
     
     /**
@@ -103,20 +77,20 @@ public class Puzzle
         souris.pos.x = EcranGraphique.getMouseX();
         souris.pos.y = EcranGraphique.getMouseY();
 
-        if(EcranGraphique.getMouseState() == 0)
+        if(EcranGraphique.getMouseState() == 0) // Pas de boutons presses
         {
             if(souris.clicDroit)
                 souris.clicDroit = false;
             if(souris.clicGauche)
                 souris.clicGauche = false;
         }
-        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1) // Si bouton presse et c'est le bouton gauche
         {
             if(!souris.clicGauche) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
                 ret = true;
             souris.clicGauche = true;
         }
-        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3) // Si bouton presse et c'est le bouton droit
         {
             if(!souris.clicDroit) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
                 ret = true;
@@ -237,6 +211,9 @@ public class Puzzle
                     + pzl.nbCoups + " coups " + tempsResolution(pzl.temps/1000));
             EcranGraphique.drawText(500, 240, EcranGraphique.COLABA8x13, "Clique n'importe ou pour recommencer," +
                     " ou bien quitte le jeu");
+            EcranGraphique.drawText(500, 260, EcranGraphique.COLABA8x13, "(\\__/)    BRAVO");
+            EcranGraphique.drawText(500, 275, EcranGraphique.COLABA8x13, "(='.'=)   BIEN");
+            EcranGraphique.drawText(500, 290, EcranGraphique.COLABA8x13, "(\")_(\")   JOUE !");
         }
 
         // Affichage d'un menu
@@ -277,8 +254,7 @@ public class Puzzle
         EcranGraphique.flush();
     }
     
-    
-        /**
+    /**
      * Initialisation du puzzle
      * @param pzl   puzzle a initialiser
      * @param image image a malanger
@@ -423,6 +399,11 @@ public class Puzzle
             melangeRotations(pzl);
     }
 
+    /**
+     * Creation des bordures avec des dents interieures ou exterieures
+     *
+     * @param pzl   Puzzle pour lequel on veut creer ces dents
+     */
     public static void bords(PuzzleJeu pzl)
     {
         for(int j = 0; j < nbPiecesY; j++)
@@ -438,6 +419,13 @@ public class Puzzle
         }
     }
 
+    /**
+     * Cette fonction modifie les images de deux pieces pour ajouter une dent sortante ou entrante sur un bord commun aux deux pieces
+     * Les deux pieces doivent etre cotes a cotes verticalement (l'une en dessous de l'autre)
+     *
+     * @param pc1  Piece du dessus
+     * @param pc2  Piece du dessous
+     */
     public static void bordsVertic(Piece pc1, Piece pc2)
     {
         int l = 2; // Nombre de cases a remplir
@@ -459,7 +447,7 @@ public class Puzzle
                             = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].bleu;
                     pc1.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][pc1.image.length - i - 1].alpha
                             = pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha;
-                    // On met le pixel transparent dans l'image de droite
+                    
                     pc2.image[((pc1.image[0].length / 2) + (l / 2) - 1) - j][(imgLarg / nbPiecesX) / 2 - i - 1].alpha = 0;
                 }
                 l += 2;
@@ -490,6 +478,13 @@ public class Puzzle
         }
     }
 
+    /**
+     * Cette fonction modifie les images de deux pieces pour ajouter une dent sortante ou entrante sur un bord commun aux deux pieces
+     * Les deux pieces doivent etre cotes a cotes horizontalement.
+     *
+     * @param pc1  Piece de gauche
+     * @param pc2  Piece de droite
+     */
     public static void bordsHoriz(Piece pc1, Piece pc2)
     {
         int l = 2; // Nombre de cases a remplir
@@ -605,9 +600,9 @@ public class Puzzle
             for(int i = 0; i < nbPiecesX; i++)
             {
                 pzl.pieces[i][j].pos.x = positions[j*(nbPiecesX)+i] % nbPiecesX;
-                pzl.pieces[i][j].pos.x = x2 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x) - (imgLarg / nbPiecesX)/4;
+                pzl.pieces[i][j].pos.x = x1 + imgLarg + 100 + (((imgLarg / nbPiecesX) + 5) * pzl.pieces[i][j].pos.x) - (imgLarg / nbPiecesX)/4;
                 pzl.pieces[i][j].pos.y = positions[j*(nbPiecesX)+i] / nbPiecesX;
-                pzl.pieces[i][j].pos.y = y2 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y) - (imgHaut / nbPiecesY)/4;
+                pzl.pieces[i][j].pos.y = y1 + (((imgHaut / nbPiecesY) + 5) * pzl.pieces[i][j].pos.y) - (imgHaut / nbPiecesY)/4;
             }
         }
     }
@@ -634,15 +629,7 @@ public class Puzzle
         int y;
     }
 
-    /**
-     * Souris qui est utilisee tout au long du jeu
-     */
 
-    /**
-     * Fonction principale avec les premieres initialisations
-     * @param args  tableau de chaines de caracteres qui sont les arguments envoyes a l'application
-     */
-    
      /**
      * Retourne si le curseur est sur une piece ou non
      * @param pzl    Le puzzle a tester
@@ -724,12 +711,12 @@ public class Puzzle
     public static void drawBouton(Bouton bt)
     {
         // Definition de la couleur du bouton
-        if(bt.survol && !bt.appui) // Si le bouton est survole mais pas appuye
-            EcranGraphique.setColor(100, 0, 0);
-        else if(bt.appui) // Si le bouton est appuye
-            EcranGraphique.setColor(255, 0, 0);
+        if(bt.appui) // Si le bouton est appuye
+            EcranGraphique.setColor(210, 0, 0);
+        else if(bt.survol) // Si le bouton est survole mais pas appuye
+            EcranGraphique.setColor(119, 0, 254);
         else // Sinon
-            EcranGraphique.setColor(0, 0, 0);
+            EcranGraphique.setColor(6, 0, 179);
 
         EcranGraphique.fillRect(bt.x, bt.y, bt.larg, bt.haut); // rectangle symbolisant le bouton
         EcranGraphique.setColor(255, 255, 255); // Couleur du texte
@@ -851,6 +838,12 @@ public class Puzzle
         // On joue un nouveau coup tant que le puzzle n'est pas reconstitue et qu'on n'a pas demande a changer de puzzle
         while(!estReconstitue(pzl) && !relancer)
         {
+            if(nbPiecesX == 3 && nbPiecesY == 4)
+                pzl.mn.taille3x4.appui = true;
+            if(nbPiecesX == 6 && nbPiecesY == 8)
+                pzl.mn.taille6x8.appui = true;
+            if(rotation)
+                pzl.mn.activRotation.appui = true;
             relancer = jouerCoup(pzl);
             pzl.nbCoups++;
         }
@@ -881,7 +874,7 @@ public class Puzzle
     public static String tempsResolution(long nbSecondes)
     {
         String msgFin;
-        long heure   = nbSecondes / 60 / 60 % 24;
+        long heure   = nbSecondes / 60 / 60;
         long minute  = nbSecondes  / 60  % 60;
         long seconde = nbSecondes  % 60;
 
@@ -983,10 +976,7 @@ public class Puzzle
                 {
                     pzl.mn.relanc.appui = true;
                     relancer = true;
-
                 }
-                else
-                    pzl.mn.relanc.appui = false;
 
                 if(estSurBouton(pzl.mn.taille3x4)) // Bouton taille 3x4
                 {
@@ -995,8 +985,6 @@ public class Puzzle
                     nbPiecesY = 4;
                     relancer = true; // On change aussi de puzzle
                 }
-                else
-                    pzl.mn.taille3x4.appui = false;
 
                 if(estSurBouton(pzl.mn.taille6x8)) // Bouton taille 6x8
                 {
@@ -1005,27 +993,19 @@ public class Puzzle
                     nbPiecesY = 8;
                     relancer = true; // On change aussi de puzzle
                 }
-                else
-                    pzl.mn.taille6x8.appui = false;
                 
                 if(estSurBouton(pzl.mn.activRotation)) // Bouton rotation
                 {
                     pzl.mn.activRotation.appui = true;
                     rotation = !rotation; // On inverse rotation
                     relancer = true; // On change aussi de puzzle
-
-
                 }
-                else
-                    pzl.mn.taille6x8.appui = false;
 
                 if(estSurBouton(pzl.mn.quitter)) // Bouton quitter
                 {
                     pzl.mn.quitter.appui = true;
-                    System.exit(0);
+                    EcranGraphique.exit();
                 }
-                else
-                    pzl.mn.quitter.appui = false;
 
             }
             else if(unClic && souris.clicDroit) // Si c'est un clic droit
@@ -1088,6 +1068,13 @@ public class Puzzle
         short alpha = 255;
     }
 
+    /**
+     * Cette fonction affiche une image a l'ecran a l'aide de EcranGraphique, tout en gerant la transparence de l'image
+     *
+     * @param x      Position en x de l'image a dessiner
+     * @param y      Position en y de l'image a dessiner
+     * @param image  Image a dessiner (matrice de Pixel)
+     */
     public static void drawImage(int x, int y, Pixel[][] image)
     {
         /** Largeur de l'image **/
@@ -1109,6 +1096,13 @@ public class Puzzle
         EcranGraphique.setAlphaBlendingMode(false);
     }
 
+    /**
+     * Cette fonction convertit une matrice d'entiers correspondant a une image sans composante alpha,
+     * en une matrice de Pixel, donc avec une composante alpha permettant de gerer la transparence.
+     *
+     * @param image  Matrice d'entiers
+     * @return       Une matrice de Pixel (corrspond donc a une image)
+     */
     public static Pixel[][] conversion(int[][] image)
     {
         /**
@@ -1139,7 +1133,7 @@ public class Puzzle
     public static int[][] saisirImage()
     {
         int[][] img;
-        img = EcranGraphique.loadPNGFile("img/" + rand(1,31) + ".png"); // Selection de l'image entre les 31 dans /img
+        img = EcranGraphique.loadPNGFile("img/" + rand(1, 32) + ".png"); // Selection de l'image entre les 31 dans /img
 
         // Lignes noires symbolisant les bords
         for(int j = 0; j < 5; j++)
@@ -1163,6 +1157,10 @@ public class Puzzle
         return img;
     }
    
+    /**
+     * Cette fonction tourne une piece de 90 degres en mettant a jour l'image et la rotation de la piece passee en parametre.
+     * @param pc   Piece qu'on veut faire tourner de 90°
+     */
     public static void pivoterImage(Piece pc)
     {
         // On indique la nouvelle rotation de la piece
@@ -1210,7 +1208,10 @@ public class Puzzle
 
 
 
-    
+    /**
+     * Cette fonction initialise l'affichage et permet de rejouer si voulu.
+     * @param args   Tableau des chaines de caracteres qui sont les arguments envoyes au programme
+     */
     public static void main(String[] args)
     {
         // Initialisation de la fenetre
@@ -1221,7 +1222,7 @@ public class Puzzle
         EcranGraphique.clear();
 
         // Declaration de la variable contenant l'essentiel du jeu
-        PuzzleJeu pzl = null;
+        PuzzleJeu pzl;
 
 
         do
