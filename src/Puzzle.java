@@ -77,20 +77,20 @@ public class Puzzle
         souris.pos.x = EcranGraphique.getMouseX();
         souris.pos.y = EcranGraphique.getMouseY();
 
-        if(EcranGraphique.getMouseState() == 0)
+        if(EcranGraphique.getMouseState() == 0) // Pas de boutons presses
         {
             if(souris.clicDroit)
                 souris.clicDroit = false;
             if(souris.clicGauche)
                 souris.clicGauche = false;
         }
-        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1)
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 1) // Si bouton presse et c'est le bouton gauche
         {
             if(!souris.clicGauche) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
                 ret = true;
             souris.clicGauche = true;
         }
-        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3)
+        else if(EcranGraphique.getMouseState() == 1 && EcranGraphique.getMouseButton() == 3) // Si bouton presse et c'est le bouton droit
         {
             if(!souris.clicDroit) // Pour ne renvoyer vrai que la premiere fois qu'on voit le clic
                 ret = true;
@@ -1133,7 +1133,7 @@ public class Puzzle
     public static int[][] saisirImage()
     {
         int[][] img;
-        img = EcranGraphique.loadPNGFile("img/" + rand(1,31) + ".png"); // Selection de l'image entre les 31 dans /img
+        img = EcranGraphique.loadPNGFile("img/" + rand(1, 32) + ".png"); // Selection de l'image entre les 31 dans /img
 
         // Lignes noires symbolisant les bords
         for(int j = 0; j < 5; j++)
@@ -1222,7 +1222,7 @@ public class Puzzle
         EcranGraphique.clear();
 
         // Declaration de la variable contenant l'essentiel du jeu
-        PuzzleJeu pzl = null;
+        PuzzleJeu pzl;
 
 
         do
