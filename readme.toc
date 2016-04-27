@@ -1,0 +1,19 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Mode d'emploi}{3}{section.1}
+\contentsline {section}{\numberline {2}R\IeC {\'e}solution des probl\IeC {\`e}mes}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Modification des pi\IeC {\`e}ces}{4}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}Bordures des pi\IeC {\`e}ces}{4}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}D\IeC {\'e}coupage de l'image}{4}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.3}Rotation des pi\IeC {\`e}ces}{5}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.4}Formes des pi\IeC {\`e}ces}{5}{subsubsection.2.1.4}
+\contentsline {subsection}{\numberline {2.2}Ergonomie}{6}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Placement des pi\IeC {\`e}ces}{6}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Boutons}{6}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}Gestion des clics}{8}{subsubsection.2.2.3}
+\contentsline {subsection}{\numberline {2.3}Gameplay}{8}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Nombres de coups et temps}{8}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}Nouvelle partie}{9}{subsubsection.2.3.2}
+\contentsline {subsubsection}{\numberline {2.3.3}Condition de fin}{9}{subsubsection.2.3.3}
+\contentsline {subsection}{\numberline {2.4}Affichage et d\IeC {\'e}placements}{10}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}D\IeC {\'e}placement des pi\IeC {\`e}ces}{10}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Affichage}{10}{subsubsection.2.4.2}

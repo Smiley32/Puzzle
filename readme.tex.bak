@@ -305,36 +305,9 @@ Pour le nombre de clic, nous avons compté tous les clics en les stockant dans u
 \subsubsection{Nouvelle partie}
 
 Le joueur peut a la fin d'une partie relancer une partie en cliquant n'importe ou. Pour que le puzzle se relance nous avons créé un booléen \variable{relancer} celui ci permet de savoir si l'utilisateur veut un autre puzzle ou non. Si l'utilisateur veut un nouveau puzzle, alors on réinitialise tout, l'image, le chronomètre le nombre de coups. En fait, on test la condition de relancer jusqu'à ce que celui ci passe à vrai. Dans ce cas tout est réinitialisé... 
-
 \subsubsection{Condition de fin}
 
 A la fin du jeu, le joueur doit savoir si celui ci à résolu le puzzle ou non. Pour cela, nous avons créé la fonction : 
-\begin{lstlisting}
-public static boolean estReconstitue(PuzzleJeu pzl)
-    {
-        int i = 0;
-        int j;
-        boolean reconstituee = true;
-
-        while(i < nbPiecesX && reconstituee) // Tant qu'on n'a pas trouve de case non placee
-        {
-            j = 0; // On remet a zero j pour compter a partir de zero a chaque tour
-            while(j < nbPiecesY && reconstituee) // Tant qu'on n'a pas trouve de case non placee
-            {
-                if(!pzl.pieces[i][j].placee || pzl.pieces[i][j].rotation != 0)
-                {
-                    reconstituee = false;
-                }
-                j++; // Incrementation de j a chaque tour de la boucle interieure
-            }
-            i++; // Incrementation de i a chaque tour de la premiere boucle
-        }
-
-        return reconstituee;
-    }
-\end{lstlisting}
-
-Tant que la fonction ci dessus retourne false alors le puzzle n'est pas résolu. En fait, on test pour chaque pièce si elle est la bonne place. Et si c'est le cas, alors la fonction retourne vrai. 
 
 
 
