@@ -903,7 +903,7 @@ public class Puzzle
      */
     public static boolean jouerCoup(PuzzleJeu pzl)
     {
-        boolean clk = false; // Si il y a un clic
+        boolean pieceTenue = false; // Si il y a un clic
         boolean finDuCoup = false; // Si le tour est fini
         boolean relancer = false; // Si on veut changer de puzzle
         boolean unClic; // Passe a true si il y a un clic
@@ -914,7 +914,7 @@ public class Puzzle
         {
             unClic = attendClic(); // On met a jour l'etat de la souris
             if (unClic && souris.clicGauche) { // Si il y a un clic gauche
-                if (!clk && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
+                if (!pieceTenue && estSurPiece(pzl).x != -1 && estSurPiece(pzl).y != -1) { /* Si le clic
                                                                    est sur une piece et qu'on ne tenait pas de piece */
                     pzl.caseChoisie = estSurPiece(pzl);
                     
@@ -930,9 +930,9 @@ public class Puzzle
                         pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].placee = false;
                     }
 
-                    clk = true; // pour tenir la piece jusqu'au clic suivant
+                    pieceTenue = true; // pour tenir la piece jusqu'au clic suivant
                 }
-                else if(clk) // quand on a la piece en main et qu'on clique...
+                else if(pieceTenue) // quand on a la piece en main et qu'on clique...
                 {
                     c = (souris.pos.x - x1) / (imgLarg / nbPiecesX);
                     l = (souris.pos.y - y1) / (imgHaut / nbPiecesY);
@@ -954,18 +954,18 @@ public class Puzzle
                             pzl.placements[c][l] = 1;
                         }
                         finDuCoup = true; // On indique que le tour est fini
-                        clk = false; // On indique que l'utilisateur a relache la piece
+                        pieceTenue = false; // On indique que l'utilisateur a relache la piece
                         
                     }
                     else if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] != 0)
                     {
                         // finDuCoup = false; // Le tour n'est pas fini car on n'a pas lache la piece
-                        clk = true; // Ici, clk = true, mais pas besoin de la repreciser, il est deja a true
+                        pieceTenue = true; // Ici, pieceTenue = true, mais pas besoin de la repreciser, il est deja a true
                     }
                     else
                     {
                         finDuCoup = true; // On indique que le tour est fini
-                        clk = false; // On indique que l'utilisateur a relache la piece
+                        pieceTenue = false; // On indique que l'utilisateur a relache la piece
                     }
                     
                 }
@@ -1018,7 +1018,7 @@ public class Puzzle
             }
 
             // On fait suivre le curseur par la piece
-            if (clk) {
+            if (pieceTenue) {
                 pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.x = EcranGraphique.getMouseX() - (imgLarg / nbPiecesX)/2 - (imgLarg / nbPiecesX)/4;
                 pzl.pieces[pzl.caseChoisie.x][pzl.caseChoisie.y].pos.y = EcranGraphique.getMouseY() - (imgHaut / nbPiecesY)/2 - (imgHaut / nbPiecesY)/4;
             }
