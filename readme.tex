@@ -7,8 +7,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 % \usepackage{mathrsfs}
+\usepackage{multicol}
 
 \usepackage{hyperref}
+\hypersetup{pdfborder={0 0 0}}
 \usepackage{scrextend}
 \usepackage{xspace}
 
@@ -69,33 +71,33 @@ Enfin, plusieurs boutons sont à la disposition du joueur : il y a un bouton pou
 
 \section{Résolution des problèmes}
 
-Problèmes (à mettre dans l'ordre):
-\begin{itemize}
-	\item
-		Affichage (Tracage des pièces à l'écran, transparence, tjrs même fonction affichage, pzl passé en param);
-	\item
-		Placement des pièces dans la grille (Quand on clique au dessus d'une case en tenant une pièce, comment cell-ci est-elle positionnée dans la grille --> Est-elle au bon endroit ou non.);
-	\item
-		Condition de fin (Toutes les pièces placées correctement dans la grille, bonne rotation --> comment le sait-on?);
-	\item
-		Déplacement des pièces (Comment la pièce suit le curseur et est devant les autres, au premier clic, on tient l'image, au second on la lache);
-	\item
-		Rotation des pièces (Comment se passe la rotation : formule ; au clic droit, on lache l'image si on la tenait et on la fait tourner de 90$^\circ$);
-	 \item
-		Forme des pièces (Comment on fait les pics sur chaque côtés des images --> les pics sont complémentaires entre les images ; schéma pour comprendre);
-	\item
-		Clic (Systeme de gestion des clics pour simplifier leur utilisation --> Comment et pourquoi);
-	\item
-		Découpage de l'image (Comment on découpe l'image et pourquoi lors de l'initialisation);
-	\item
-		Boutons (Mise en place d'un systeme de création et d'affichage de boutons : comment il marche et pourquoi l'avoir fait);
-	\item
-		Nouvelle partie (Mise en place d'un système permettant de rejouer --> Comment ça marche);
-	\item
-		Bordures des pièces (On dessine un trait épais noir sur le bord extérieur du puzzle --> comment ça marche);
-	\item
-		Nombre de coups et temps (Les coups sont comptés et le temps aussi).
-\end{itemize}
+%Problèmes (à mettre dans l'ordre):
+%\begin{itemize}
+%	\item
+%		Affichage (Tracage des pièces à l'écran, transparence, tjrs même fonction affichage, pzl passé en param);
+%	\item
+%		Placement des pièces dans la grille (Quand on clique au dessus d'une case en tenant une pièce, comment cell-ci est-elle positionnée dans la grille --> Est-elle au bon endroit ou non.);
+%	\item
+%		Condition de fin (Toutes les pièces placées correctement dans la grille, bonne rotation --> comment le sait-on?);
+%	\item
+%		Déplacement des pièces (Comment la pièce suit le curseur et est devant les autres, au premier clic, on tient l'image, au second on la lache);
+%	\item
+%		Rotation des pièces (Comment se passe la rotation : formule ; au clic droit, on lache l'image si on la tenait et on la fait tourner de 90$^\circ$);
+%	 \item
+%		Forme des pièces (Comment on fait les pics sur chaque côtés des images --> les pics sont complémentaires entre les images ; schéma pour comprendre);
+%	\item
+%		Clic (Systeme de gestion des clics pour simplifier leur utilisation --> Comment et pourquoi);
+%	\item
+%		Découpage de l'image (Comment on découpe l'image et pourquoi lors de l'initialisation);
+%	\item
+%		Boutons (Mise en place d'un systeme de création et d'affichage de boutons : comment il marche et pourquoi l'avoir fait);
+%	\item
+%		Nouvelle partie (Mise en place d'un système permettant de rejouer --> Comment ça marche);
+%	\item
+%		Bordures des pièces (On dessine un trait épais noir sur le bord extérieur du puzzle --> comment ça marche);
+%	\item
+%		Nombre de coups et temps (Les coups sont comptés et le temps aussi).
+%\end{itemize}
 
 %////////////////////////////////////////////////////////////////////////////////
 %///////////////////////////PREMIER CHAPITRE EMILE////////////////////
@@ -527,5 +529,45 @@ On termine la fonction en affichant le tout à l'écran.
 
 \newpage
 
+\section{Conclusion}
+
+\begin{multicols}{2}
+
+Développé par Jeannin Émile :
+\begin{itemize}
+\item
+	Bordures des pièces ;
+\item
+	Découpage de l'image ;
+\item
+	Rotation des pièces ;
+\item
+	Forme des pièces ;
+\item
+	Déplacement des pièces ;
+\item
+	Affichage.
+\end{itemize}
+
+Développé par Mottet Théo :
+\begin{itemize}
+\item
+	Placement des pièces ;
+\item
+	Boutons ;
+\item
+	Gestion des clics ;
+\item
+	Nombre de coups et temps ;
+\item
+	Nouvelle partie ;
+\item
+	Condition de fin.
+\end{itemize}
+\end{multicols}
+
+Cependant, nous avons réfléchis ensemble sur chaque fonction ainsi que sur les structures et nous avons chacun amélioré les fonctionnalités du jeu. Cette répartition représente donc une répartition simplifiée de notre travail.
+
+\listoffigures
 
 \end{document}
