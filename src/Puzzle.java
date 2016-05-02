@@ -1,5 +1,5 @@
 /**
- * Projet n°2 (Puzzle) - Jeannin Emile, Mottet Theo - I4 CMI
+ * Projet n°2 (Puzzle) - Jeannin Emile, Mottet Theo - I4 CMI (Groupe de TP 7 - MASSON Pierre-Alain)
  */
 public class Puzzle
 {
@@ -375,8 +375,6 @@ public class Puzzle
                         pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].alpha
                                 = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].alpha;
 
-                        //imgTemp[l][k] =
-                        //E.ln("IMAGE : " + imgTemp[l][k]);
                         // Position de l'image : pas encore definie
                         pzl.pieces[l][k].pos.y = -1;
                         pzl.pieces[l][k].pos.x = -1;
@@ -651,7 +649,6 @@ public class Puzzle
                         && (souris.pos.x <= (pzl.pieces[i][j].pos.x + imgLarg / nbPiecesX + (imgLarg / nbPiecesX)/4))
                         && (souris.pos.y >= pzl.pieces[i][j].pos.y + (imgHaut / nbPiecesY)/4)
                         && (souris.pos.y <= (pzl.pieces[i][j].pos.y + (imgHaut / nbPiecesY) + (imgHaut / nbPiecesY)/4));
-                // && !pzl.pieces[i][j].placee;
                 if(est) // Est sur une piece
                 {
                     pos.x = i;
@@ -959,7 +956,6 @@ public class Puzzle
                     }
                     else if(c >= 0 && l >= 0 && c < nbPiecesX && l < nbPiecesY && pzl.placements[c][l] != 0)
                     {
-                        // finDuCoup = false; // Le tour n'est pas fini car on n'a pas lache la piece
                         pieceTenue = true; // Ici, pieceTenue = true, mais pas besoin de la repreciser, il est deja a true
                     }
                     else
@@ -1188,7 +1184,6 @@ public class Puzzle
         {
             for(int i = 0; i < pc.image.length; i++)
             {
-                // pc.image[(pc.image.length) - j - 1][i] = new Pixel();
                 pc.image[(pc.image.length) - j - 1][i].rouge = imgTrans[i][j].rouge;
                 pc.image[(pc.image.length) - j - 1][i].vert = imgTrans[i][j].vert;
                 pc.image[(pc.image.length) - j - 1][i].bleu = imgTrans[i][j].bleu;
