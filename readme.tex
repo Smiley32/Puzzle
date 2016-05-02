@@ -46,7 +46,7 @@
 %////////////////////////////////////////////////////////////////////////////////
 %///////////////////////////PAGE DE GARDE////////////////////////////////
 %//////////////////////////////////////////////////////////////////////////////
-\title{Algo-Prog\\Sujet \no2 : Puzzle}
+\title{Algorithmique et Programmation\\Sujet \no2 : Puzzle}
 \author{Jeannin Émile, Mottet Théo}
 
 \begin{document}
@@ -57,15 +57,15 @@
 \newpage
 \section{Mode d'emploi}
 
-Le but du jeu est de reconstituer l'image dans la grille se trouvant à gauche de l'écran. Pour cela, le joueur peut cliquer sur une pièce, ce qui aura pour conséquence de voir la pièce suivre le curseur. Il faudra recliquer pour déposer la pièce. Si le curseur se trouve au dessus d'une des cases de la grille, l'image tenue sera déposée correctement dans la case (cela compte comme un coup).
+Le but du jeu est de reconstituer l'image dans la grille se trouvant à gauche de l'écran. Pour cela, le joueur peut cliquer sur une pièce, ce qui aura pour conséquence de voir la pièce suivre le curseur. Il faudra recliquer pour déposer la pièce. Si le curseur se trouve au dessus d'une des cases de la grille, l'image tenue sera déposée correctement dans la case, cela compte comme un coup.
 
-Pour que le puzzle soit terminé, il faut que chaque pièce soit dans la bonne case et qu'elle ne soit pas tournée (la rotation de la pièce doit être de 0 degrés).
+Pour que le puzzle soit terminé, il faut que chaque pièce soit dans la bonne case et qu'elle ne soit pas tournée.
 
-L'utilisateur peut tourner une piece de 90 degrés dans le sens des éguilles d'une montre en effectuant un clic droit sur une pièce. Cela a compte comme un coup.
+L'utilisateur peut tourner une piece de 90 degrés dans le sens des aiguilles d'une montre en effectuant un clic droit sur une pièce, cela compte comme un coup.
 
 A la fin du jeu, le temps est affiché ainsi que le nombre de coups que l'utilisateur a joué afin de résoudre le puzzle. On peut alors cliquer quelque part pour essayer un nouveau puzzle, ou bien simplement quitter l'application.
 
-Enfin, plusieurs boutons sont à la disposition du joueur : pour changer de puzzle (aléatoirement), pour changer le nombre de pièces (a aussi pour effet de changer de puzzle) et pour activer/désactiver la rotation des pièces.
+Enfin, plusieurs boutons sont à la disposition du joueur : il y a un bouton pour changer de puzzle aléatoirement, un bouton pour changer le nombre de pièces qui a aussi pour effet de changer de puzzle et enfin il y a un bouton pour activer/désactiver la rotation des pièces.
 
 \section{Résolution des problèmes}
 
@@ -107,9 +107,57 @@ Dans cette partie, nous allons expliquer notre démarche pour tout ce qui a port
 
 Afin de pouvoir gérer la transparence d'une image, nous avons créé un type agrégé \variable{Pixel} qui permet à l'image d'avoir une composante alpha. Par la même occasion, nous avons créé la fonction \variable{drawImage} qui permet de tracer cette image à l'aide de la fonction \variable{EcranGraphique.drawPixel}. Les images seront donc des matrices de \variable{Pixel}.
 
+\begin{figure}[hpt]
+	\center
+	\caption{\label{Type agrégé pixel} Type agrégé pixel}
+\begin{lstlisting}
+ static class Pixel
+{
+        /** Dose de rouge d'un pixel (de 0 a 255) **/
+        short rouge = 0;
+        /** Dose de vert d'un pixel (de 0 a 255) **/
+        short vert = 0;
+        /** Dose de bleu d'un pixel (de 0 a 255) **/
+        short bleu = 0;
+        /** Transparence d'un pixel de [0, 255] **/
+        short alpha = 255;
+}
+
+\end{lstlisting}
+\end{figure}
+
+\begin{figure}[hpt]
+	\center
+	\caption{\label{Fonction drawImage} Fonction drawImage}
+\begin{lstlisting}
+public static void drawImage(int x, int y, Pixel[][] image)
+{
+        /** Largeur de l'image **/
+        int larg = image.length;
+        /** Hauteur de l'image. On suppose que la largeur n'est pas nulle **/
+        int haut = image[0].length;
+
+        EcranGraphique.setAlphaBlendingMode(true);
+
+        for(int j = 0; j < haut; j++)
+        {
+            for(int i = 0; i < larg; i++)
+            {
+                EcranGraphique.setAlpha( (double)(image[i][j].alpha) / 255.0);
+                EcranGraphique.setColor(image[i][j].rouge, image[i][j].vert, image[i][j].bleu);
+                EcranGraphique.drawPixel(x + i, y + j);
+            }
+        }
+        EcranGraphique.setAlphaBlendingMode(false);
+}
+
+
+\end{lstlisting}
+\end{figure}
+
 \subsubsection{Bordures des pièces}
 
-Pour que l'utilisateur du programme puisse facilement reconnaître les pièces qui sont en bordure du puzzle, nous avons décidé de tracer un contour noir de quelques pixels autour de l'image. Nous procédons donc avant le découpage de l'image. Dans la fonctionn \variable{saisirImage}, nous procédons ainsi :
+Pour que l'utilisateur du programme puisse facilement reconnaître les pièces qui sont en bordure du puzzle, nous avons décidé de tracer un contour noir de quelques pixels autour de l'image. Nous procédons au tracage de ces contours avant le découpage de l'image. Dans la fonction \variable{saisirImage}, nous procédons ainsi :
 
 \begin{lstlisting}
 for(int j = 0; j < 5; j++)
@@ -122,13 +170,38 @@ for(int j = 0; j < 5; j++)
 }
 \end{lstlisting}
 
-Ce code permet de tracer deux lignes : une en haut de l'image, une au bas de l'image, chacune d'une largeur de 5 pixels. Nous utilisons le même principe pour tracer les deux lignes restantes, à gauche et à droite de l'image.
+Ce code permet de tracer deux lignes : une en haut de l'image, une en bas de l'image, chacune d'une largeur de 5 pixels. Nous utilisons le même principe pour tracer les deux lignes restantes, à gauche et à droite de l'image.
 
 \subsubsection{Découpage de l'image}
 
 Une fois l'image chargée, elle doit être découpée afin de constituer les pièces du puzzle. Pour cela, nous commençons par initialiser chaque pièces, ainsi que l'image de chaque pièce. La taille de l'image d'une pièce sera de 1.5 fois la largeur visible (de même en hauteur) car elle va posséder des bordures transparentes qui permettront d'ajouter des dents sur les pièces.
 
-Le découpage de l'image est plutôt simple car il s'agit en fait d'une copie de chaque pixel de l'image chargée dans la case correspondante (voir code). Mais on pense aux bordures pour centrer l'image visible soit centrée dans le tableau de pixels. Les pixels non attribués lors de cette copie devront être transparent.
+Le découpage de l'image est plutôt simple car il s'agit en fait d'une copie de chaque pixel de l'image chargée dans la case correspondante. ( Voir code )
+%\begin{lstlisting}
+%// On decoupe l'image en pieces et on initialise les variables restantes
+%for(int k = 0; k < nbPiecesY; k++)
+%{
+%  for (int l = 0; l < nbPiecesX; l++) // On parcourt chaque case de la grille
+%  {
+%    for(int j = 0; j < imgHaut / nbPiecesY; j++)
+%    {
+%      for(int i = 0; i < imgLarg / nbPiecesX; i++) // On copie chaque pixel de l'image dans la piece [l][k]
+%      {
+%      pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].rouge
+%      = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].rouge;
+%      pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].vert
+%      = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].vert;
+%      pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].bleu
+%      = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].bleu;
+%      pzl.pieces[l][k].image[i + (imgLarg / nbPiecesX)/4][j + (imgLarg / nbPiecesX)/4].alpha
+%     = img[l * (imgLarg / nbPiecesX) + i][k * (imgHaut / nbPiecesY) + j].alpha;
+%     }
+%    }
+%  }
+%}
+%\end{lstlisting}
+
+Mais on pense aux bordures pour centrer l'image visible soit centrée dans le tableau de pixels. Les pixels non attribués lors de cette copie devront être transparent.
 
 \subsubsection{Rotation des pièces}
 
@@ -136,7 +209,54 @@ Dans le cas où \variable{rotation} est vrai, donc dans le cas où la rotation e
 
 Ainsi, dans la fonction \variable{jouerCoup}, si il y a un clic droit et que ce clic droit est sur une pièce, on fait pivoter cette dernière et on fini le tour. Ceci a pour effet de lâcher la pièce tenue (si il y en avait une) et d'incrémenter le nombre de coups utilisés par le joueur.
 
-Nous avons créé une fonction \variable{pivoterImage} qui permet de tourner une pièce de 90\degr. Cette fonction indiquera que la pièce a été tournée en ajoutant 90 à la variable \variable{rotation} de la pièce en question et fera pivoter l'image. Dans le but de tourner l'image, nous avons besoin de changer la position de chacun de ses pixels. Pour cela, nous copions l'image dans une image temporaire (\variable{Pixel imgTrans[][]}). Nous pourrons ainsi réattribuer chaque pixel correctement.
+Nous avons créé une fonction \variable{pivoterImage}(voir figure \no\ref{Fonction pivoterImage} qui permet de tourner une pièce de 90\degr. Cette fonction indiquera que la pièce a été tournée en ajoutant 90 à la variable \variable{rotation} de la pièce en question et fera pivoter l'image. Dans le but de tourner l'image, nous avons besoin de changer la position de chacun de ses pixels. Pour cela, nous copions l'image dans une image temporaire (\variable{Pixel imgTrans[][]}). Nous pourrons ainsi réattribuer chaque pixel correctement.
+
+\begin{figure}[hpt]
+	\center
+	\caption{\label{Fonction pivoterImage} Fonction pivoterImage}
+\begin{lstlisting}
+public static void pivoterImage(Piece pc)
+{
+        // On indique la nouvelle rotation de la piece
+        pc.rotation = pc.rotation + 90;
+        // Pour que la rotation soit a zero apres 270
+        pc.rotation = pc.rotation % 360;
+
+        Pixel[][] imgTrans; // image de transition
+        imgTrans = new Pixel[pc.image.length][pc.image[0].length];
+
+        // On copie l'ancienne image dans notre image de transition
+        for(int j = 0; j < pc.image[0].length; j++)
+        {
+            for(int i = 0; i < pc.image.length; i++)
+            {
+                imgTrans[i][j] = new Pixel();
+                imgTrans[i][j].rouge = pc.image[i][j].rouge;
+                imgTrans[i][j].vert = pc.image[i][j].vert;
+                imgTrans[i][j].bleu = pc.image[i][j].bleu;
+                imgTrans[i][j].alpha = pc.image[i][j].alpha;
+            }
+        }
+
+        // On copie l'image de transition apres l'avoir fait pivotee de 90 degres
+        for(int j = 0; j < pc.image[0].length; j++)
+        {
+            for(int i = 0; i < pc.image.length; i++)
+            {
+                // pc.image[(pc.image.length) - j - 1][i] = new Pixel();
+                pc.image[(pc.image.length) - j - 1][i].rouge = imgTrans[i][j].rouge;
+                pc.image[(pc.image.length) - j - 1][i].vert = imgTrans[i][j].vert;
+                pc.image[(pc.image.length) - j - 1][i].bleu = imgTrans[i][j].bleu;
+                pc.image[(pc.image.length) - j - 1][i].alpha = imgTrans[i][j].alpha;
+                imgTrans[i][j] = null;
+            }
+        }
+        imgTrans = null;
+}
+
+
+\end{lstlisting}
+\end{figure}
 
 L'image étant une matrice, pour la faire pivoter, nous procédons ainsi : le pixel se trouvant à la position (i, j) -- i le numéro de colonne et j le numéro de ligne -- devra se trouver à la position (n - j, i) avec n la largeur/hauteur de l'image.
 
@@ -154,7 +274,7 @@ Nous avons créé une fonction \variable{bords} qui permet de créer les dents s
 
 Pour pouvoir ajouter des dents sortantes aux pièces, nous avons agrandi la taille de leur image, en placant tout autour de l'image visible un contour transparent (de largeur 1/4 de la taille de l'image visible). Ainsi, on va pouvoir changer la couleur de certains pixels transparents pour afficher une dent sortante. Pour afficher une dent entrante, il suffira de rendre certains pixels transparents.
 
-Voici comment nous procédons pour créer une dent (ici, une dent sortante à gauche et donc entrante à droite mais le principe est identique pour les autres cas de figure) : nous copions le pixel qui est au centre de l'image de droite (verticalement) et qui est horizontalement à 1/2 de la taille de l'image visible (la bordure faisant 1/4 et on veut le pixel à la pointe du triangle), et nous le plaçons sur l'image de gauche au milieu verticalement et au dernier pixel de l'image horizontalement. Le pixel à droite sera défini transparent pour créer la dent entrante. Nous continuons ainsi de suite, mais avec 3 pixels, puis 5... jusqu'à obtenir un triangle (voir code).
+Voici comment nous procédons pour créer une dent (ici, une dent sortante à gauche et donc entrante à droite mais le principe est identique pour les autres cas de figure) : nous copions le pixel qui est au centre de l'image de droite (verticalement) et qui est horizontalement à 1/2 de la taille de l'image visible (la bordure faisant 1/4 et on veut le pixel à la pointe du triangle), et nous le plaçons sur l'image de gauche au milieu verticalement et au dernier pixel de l'image horizontalement. Le pixel à droite sera défini transparent pour créer la dent entrante. Nous continuons ainsi de suite, mais avec 3 pixels, puis 5... jusqu'à obtenir un triangle.
 
 %////////////////////////////////////////////////////////////////////////////////
 %///////////////////////////DEUXIEME CHAPITRE THEO //////////////////
@@ -366,11 +486,12 @@ Tant que la fonction ci dessus retourne \variable{false} alors le puzzle n'est p
 
 
 
+
+
 %/////////////////////////////////////////////////////////////////////////////////
 %///////////////////////////QUATRIEME CHAPITRE EMILE/////////////////
 %//////////////////////////////////////////////////////////////////////////////
 
-\newpage
 \subsection{Affichage et déplacements}
 
 Cette partie décrira comment nous avons résolu la question de l'affichage et du déplacement des pièces.
@@ -381,7 +502,7 @@ Nous avons décidé que la pièce suivrait le curseur lorsqu'elle est sélection
 
 À chaque tour de boucle, nous mettons à jour la position de la pièce correspondant à \variable{caseChoisie} (uniquement si caseChoisie est valide : si aucune case n'est tenue, \variable{caseChoisie.x = -1} et \variable{caseChoisie.y = -1}. Le curseur doit se trouver au centre de l'image, la position sera donc affectée en conséquence.
 
-Enfin, dans l'affichage, cette case devra être affichée après les autrespour ne pas qu'elle soit visuellement en dessous d'une autre lorsqu'on la déplace (et qu'on puisse ainsi déduire sa véritable position dans la grille).
+Enfin, dans l'affichage, cette case devra être affichée après les autres pour ne pas qu'elle soit visuellement en dessous d'une autre lorsqu'on la déplace (et qu'on puisse ainsi déduire sa véritable position dans la grille).
 
 \subsubsection{Affichage}
 
@@ -392,17 +513,19 @@ La première étape est de nétoyer l'écran, c'est à dire d'exécuter :
 EcranGraphique.clear();
 \end{lstlisting}
 
-Ensuite, nous dessinons la grille : des lignes horizontales et des lignes verticales du même nombre de pizels que l'image (en largeur ou hauteur), et nous traçons également les instructions du jeu : quelques règles.
+Ensuite, nous dessinons la grille : des lignes horizontales et des lignes verticales du même nombre de pixels que l'image (en largeur ou hauteur), et nous traçons également les instructions du jeu : quelques règles.
 
-Vient ensuite l'affichage des pièces : l'image contenue dans celles-ci est tracée (image qui a pu être tournée préalablement), mais on prend soin de ne pas tracer l'image tenue (si il y en a une). Nous ne dessinons qu'ensuite l'image tenue,afin qu'elle soit affichée au dessus des autres.
+Vient ensuite l'affichage des pièces : l'image contenue dans celles-ci est tracée (image qui a pu être tournée préalablement), mais on prend soin de ne pas tracer l'image tenue (si il y en a une). Nous ne dessinons qu'ensuite l'image tenue, afin qu'elle soit affichée au dessus des autres.
 
-Nous traçons ensuite le texte de réussite si le puzzle est fini, puis nous affichons le menu (avec ses différents boutons) et des textes d'aide pour chaque bouton).
+Nous traçons ensuite le texte de réussite si le puzzle est fini, puis nous affichons le menu (avec ses différents boutons) et des textes d'aide pour chaque bouton.
 
 On termine la fonction en affichant le tout à l'écran. 
 
 %/////////////////////////////////////////////////////////////////////////////////
 %///////////////////////////INDEX/////////////////////////////////////////////
 %//////////////////////////////////////////////////////////////////////////////
+
+\newpage
 
 
 \end{document}
