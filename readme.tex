@@ -178,7 +178,7 @@ Ce code permet de tracer deux lignes : une en haut de l'image, une en bas de l'i
 
 Une fois l'image chargée, elle doit être découpée afin de constituer les pièces du puzzle. Pour cela, nous commençons par initialiser chaque pièces, ainsi que l'image de chaque pièce. La taille de l'image d'une pièce sera de 1.5 fois la largeur visible (de même en hauteur) car elle va posséder des bordures transparentes qui permettront d'ajouter des dents sur les pièces.
 
-Le découpage de l'image est plutôt simple car il s'agit en fait d'une copie de chaque pixel de l'image chargée dans la case correspondante. ( Voir code )
+Le découpage de l'image est plutôt simple car il s'agit en fait d'une copie de chaque pixel de l'image chargée dans la case correspondante.
 %\begin{lstlisting}
 %// On decoupe l'image en pieces et on initialise les variables restantes
 %for(int k = 0; k < nbPiecesY; k++)
@@ -203,7 +203,7 @@ Le découpage de l'image est plutôt simple car il s'agit en fait d'une copie de
 %}
 %\end{lstlisting}
 
-Mais on pense aux bordures pour centrer l'image visible soit centrée dans le tableau de pixels. Les pixels non attribués lors de cette copie devront être transparent.
+Mais on pense aux bordures pour que l'image visible soit centrée dans le tableau de pixels. Les pixels non attribués lors de cette copie devront être transparent.
 
 \subsubsection{Rotation des pièces}
 
@@ -211,7 +211,7 @@ Dans le cas où \variable{rotation} est vrai, donc dans le cas où la rotation e
 
 Ainsi, dans la fonction \variable{jouerCoup}, si il y a un clic droit et que ce clic droit est sur une pièce, on fait pivoter cette dernière et on fini le tour. Ceci a pour effet de lâcher la pièce tenue (si il y en avait une) et d'incrémenter le nombre de coups utilisés par le joueur.
 
-Nous avons créé une fonction \variable{pivoterImage}(voir figure \no\ref{Fonction pivoterImage} qui permet de tourner une pièce de 90\degr. Cette fonction indiquera que la pièce a été tournée en ajoutant 90 à la variable \variable{rotation} de la pièce en question et fera pivoter l'image. Dans le but de tourner l'image, nous avons besoin de changer la position de chacun de ses pixels. Pour cela, nous copions l'image dans une image temporaire (\variable{Pixel imgTrans[][]}). Nous pourrons ainsi réattribuer chaque pixel correctement.
+Nous avons créé une fonction \variable{pivoterImage}(voir figure \no\ref{Fonction pivoterImage}) qui permet de tourner une pièce de 90\degr. Cette fonction indiquera que la pièce a été tournée en ajoutant 90 à la variable \variable{rotation} de la pièce en question et fera pivoter l'image. Dans le but de tourner l'image, nous avons besoin de changer la position de chacun de ses pixels. Pour cela, nous copions l'image dans une image temporaire (\variable{Pixel imgTrans[][]}). Nous pourrons ainsi réattribuer chaque pixel correctement.
 
 \begin{figure}[hpt]
 	\center
@@ -260,7 +260,7 @@ public static void pivoterImage(Piece pc)
 \end{lstlisting}
 \end{figure}
 
-L'image étant une matrice, pour la faire pivoter, nous procédons ainsi : le pixel se trouvant à la position (i, j) -- i le numéro de colonne et j le numéro de ligne -- devra se trouver à la position (n - j, i) avec n la largeur/hauteur de l'image.
+L'image étant une matrice, pour la faire pivoter, nous procédons ainsi : le pixel se trouvant à la position \variable{(i, j) - i} le numéro de colonne et j le numéro de ligne -- devra se trouver à la position \variable{(n - j, i)} avec \variable{n} la \variable{largeur/hauteur} de l'image.
 
 Après avoir effectué cette opération avec chaque pixel, l'image aura bien été pivotée de 90\degr.
 
@@ -305,7 +305,7 @@ Pour ce faire, on met à jour l'état de la souris à chaque tour de boucle. On 
 Pour que l'utilisateur puisse placer la pièce il faut qu'on vérifie que le curseur de la souris se trouve bien au dessus de la grille destinée au puzzle et que la case en dessous du curseur soit libre. Une fois que la pièce est posée le tour est fini et le booléen \variable{pieceTenue} passe à faux pour indiquer que l'utilisateur à relâché la pièce.
 
 \subsubsection{Boutons}
-Dans un second temps nous parlerons des boutons présent dans le menu. 
+Dans un second temps nous parlerons des boutons présents dans le menu. 
 Chaque bouton est situé sous le puzzle.  Pour chacun d'eux on peut savoir si il y a clic ou non (voir figure \no\ref{Fonction estSurBouton}).
 
 \begin{figure}[hpt]
@@ -368,7 +368,7 @@ static class Bouton
 \end{lstlisting}
 \end{figure}
 
-Comme nous pouvons le voir dans le type agrégé, nous avons utilisé un booléen \variable{survol}. En effet nous avons utilisé ce booléen pour un aspect fonctionnel du jeu : lorsque le joueur survolera un bouton, alors celui ci changera de couleur, et affichera un message à sa droite qui aidera le joueur à appréhender le jeu. Nous avons fait de même avec le clic sur le bouton : lorsque le joueur clic que le bouton, celui ci reste coloré d'une autre couleur afin que le joueur puisse connaître le mode de jeu dans lequel il joue actuellement.
+Comme nous pouvons le voir dans le type agrégé, nous avons utilisé un booléen \variable{survol}. En effet nous avons utilisé ce booléen pour un aspect fonctionnel du jeu : lorsque le joueur survolera un bouton, alors celui-ci changera de couleur, et affichera un message à sa droite qui aidera le joueur à appréhender le jeu. Nous avons fait de même avec le clic sur le bouton : lorsque le joueur clique que le bouton, celui ci reste coloré d'une autre couleur afin que le joueur puisse connaître le mode de jeu dans lequel il joue actuellement.
  
 \subsubsection{Gestion des clics}
 
@@ -413,7 +413,7 @@ Cette partie comprendra des explications concernant le gameplay.
 
 Nous avons réalisé un chronomètre permettant de connaitre le temps que le joueur a pris pour résoudre le puzzle. 
 Pour cela, nous avons utilisé la variable \variable{pzl.temps} que nous définissons grâce à la fonction de java pour récupérer l'heure actuelle en millisecondes :\variable{ java.lang.System.currentTimeMillis()}. 
-Ensuite, nous avons juste à reprendre l'heure à laquelle le puzzle à été reconstitué et y soustraire pzl.temps qui à été initialisé lors de l'initialisation du puzzle et aussi à chaque nouveau puzzle.
+Ensuite, nous avons juste à reprendre l'heure à laquelle le puzzle à été reconstitué et y soustraire \variable{pzl.temps} qui à été initialisé lors de l'initialisation du puzzle et aussi à chaque nouveau puzzle.
 Cependant il nous a fallu convertir les millisecondes en secondes afin de faciliter la lecture pour l'utilisateur. De plus, nous avons créé une fonction permettant de n'afficher que le nécessaire : figure \no\ref{Fonction tempsResolution}.
 
 \begin{figure}[hpt]
@@ -445,11 +445,11 @@ public static String tempsResolution(long nbSecondes)
 \end{lstlisting}
 \end{figure}
 
-Pour le nombre de coups, nous avons compté tout les tours en les stockant dans une variable \variable{nbCoups} que nous augmentons de 1 à chaque fois qu'un tour est terminé (à chaque fois qu'on quitte la fonction \variable{jouerCoup}. Nous vérifions aussi si le puzzle est fini : lorsque le puzzle est reconstitué nous n'avons qu'à appeler la variable et nous connaissons alors le nombre de coups qu'il a fallu au joueur pour résoudre le puzzle. A noter que la rotation de pièce compte comme un coup.
+Pour le nombre de coups, nous avons compté tout les tours en les stockant dans une variable \variable{nbCoups} que nous augmentons de 1 à chaque fois qu'un tour est terminé (à chaque fois qu'on quitte la fonction \variable{jouerCoup}). Nous vérifions aussi si le puzzle est fini : lorsque le puzzle est reconstitué nous n'avons qu'à appeler la variable et nous connaissons alors le nombre de coups qu'il a fallu au joueur pour résoudre le puzzle. À noter que la rotation de pièce compte comme un coup.
 
 \subsubsection{Nouvelle partie}
 
-Le joueur peut a la fin d'une partie relancer une partie en cliquant n'importe où. Pour que le puzzle se relance nous avons créé un booléen \variable{relancer} qui permet de savoir si l'utilisateur veut un autre puzzle ou non. Si l'utilisateur veut un nouveau puzzle, alors on réinitialise tout, l'image, le chronomètre le nombre de coups. En fait, on test la condition de relancer jusqu'à ce que celui ci passe à vrai. Dans ce cas tout est réinitialisé. 
+Le joueur peut a la fin d'une partie en  relancer une en cliquant n'importe où. Pour que le puzzle se relance nous avons créé un booléen \variable{relancer} qui permet de savoir si l'utilisateur veut un autre puzzle ou non. Si l'utilisateur veut un nouveau puzzle, alors on réinitialise tout, l'image, le chronomètre le nombre de coups. En fait, on teste la condition de relancer jusqu'à ce que celui ci passe à vrai. Dans ce cas tout est réinitialisé. 
 
 \subsubsection{Condition de fin}
 
@@ -500,7 +500,7 @@ Cette partie décrira comment nous avons résolu la question de l'affichage et d
 
 \subsubsection{Déplacement des pièces}
 
-Nous avons décidé que la pièce suivrait le curseur lorsqu'elle est sélectionnée. Pour cela, nous vérifions (dans la fonction \variable{jouerCoup} que l'utilisateur effectue un clic gauche sur une pièce et qu'il n'y avait pas de pièces tenue à ce moment. Si l'utilisateur avait dans la main une pièce, elle sera posée par cette action. Donc après un clic sur une pièce, la pièce en question va suivre le curseur. En effet, cette pièce est identifiée par \variable{pzl.caseChoisie} avec \variable{pzl} notre variable \variable{PuzzleJeu} contenant le puzzle entier et \variable{caseChoisie} qui est une position : celle de la case tenue par l'utilisateur.
+Nous avons décidé que la pièce suivrait le curseur lorsqu'elle est sélectionnée. Pour cela, nous vérifions dans la fonction \variable{jouerCoup} que l'utilisateur effectue un clic gauche sur une pièce et qu'il n'y avait pas de pièces tenue à ce moment. Si l'utilisateur avait dans la main une pièce, elle sera posée par cette action. Donc après un clic sur une pièce, la pièce en question va suivre le curseur. En effet, cette pièce est identifiée par \variable{pzl.caseChoisie} avec \variable{pzl} notre variable \variable{PuzzleJeu} contenant le puzzle entier et \variable{caseChoisie} qui est une position : celle de la case tenue par l'utilisateur.
 
 À chaque tour de boucle, nous mettons à jour la position de la pièce correspondant à \variable{caseChoisie} (uniquement si caseChoisie est valide : si aucune case n'est tenue, \variable{caseChoisie.x = -1} et \variable{caseChoisie.y = -1}. Le curseur doit se trouver au centre de l'image, la position sera donc affectée en conséquence.
 
